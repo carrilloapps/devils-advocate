@@ -57,7 +57,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: Real-Time Event Pipeline Migration
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.7.6
+**Skill version**: 2.7.7
 **Scope**: Data — batch Spark/Redshift to Kafka + Flink + Redshift, 500M events/day, PII-containing
 
 ---

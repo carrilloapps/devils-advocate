@@ -133,7 +133,7 @@ All contributions must pass these checks before merge:
 | Fence balance | Every ` ``` ` opener has a matching closer |
 | Gate prompt | Every example ends with the exact Gate prompt from `SKILL.md` |
 | `continue` line | Must say `(risks remain active and unmitigated)` — not `(risks remain active)` |
-| Cross-references | Any file added to `frameworks/` or `examples/` must be added to the `SKILL.md` Index |
+| Cross-references | Any file added to `frameworks/`, `checklists/`, or `examples/` must be added to the `SKILL.md` Index |
 | Domain coverage | New frameworks must not duplicate an existing domain |
 | en_US identifiers | All code in examples follows the Building Protocol |
 | No stale text | No references to `with implementation`, `14-dimension`, or other legacy phrasing |

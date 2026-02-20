@@ -11,6 +11,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.7.7] — 2026-02-20
+
+### Fixed
+- **Medium — CONTRIBUTING.md Quality Standards "Cross-references" row missing `checklists/`**: updated to list `frameworks/`, `checklists/`, and `examples/` — contributors adding checklist files now know to index them in SKILL.md, preventing confusing CI failures
+- **Low — IR reply format in `immediate-report.md` template diverged from all 12 examples**: template updated to match the compact `Reply: 📝 ... | \`continue\` ...` format used consistently across examples; the multi-line format was unreachable dead code
+
+---
+
 ## [2.7.6] — 2026-02-20
 
 ### Fixed

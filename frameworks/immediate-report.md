@@ -89,9 +89,7 @@ To deliver a complete and definitive analysis of this finding, I need the follow
 ---
 I am continuing the analysis sweep in parallel. Any answers you provide will be incorporated into the final report and may change the risk rating of this and related findings.
 
-Reply with:
-  📝 [Your answers] — context incorporated, analysis confidence raised
-  `continue`        — proceed without context; this finding scored at worst-case risk
+Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case score
 ---
 ```
 
