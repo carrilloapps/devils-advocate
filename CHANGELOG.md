@@ -11,6 +11,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.7.6] — 2026-02-20
+
+### Fixed
+- **Low — Double blank line in validate.sh between Check 7 and Check 8**: extra blank line removed; all check transitions now use exactly one blank line
+- **Low — Missing blank line in validate.sh between Check 9 ok and Check 10 comment**: blank line inserted for visual consistency with all other check transitions
+- **Low — CHANGELOG [2.7.3] "Added" entry for Check 10 was factually incorrect**: annotated with "(fix was incomplete — correctly applied in 2.7.4)"
+
+---
+
 ## [2.7.5] — 2026-02-20
 
 ### Fixed
@@ -38,7 +47,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - **Low — IR Flash Format domain list truncated**: `[Architecture / Data / Security / Code / Product / UX / Strategy / ...]` replaced with full 12-domain list
 
 ### Added
-- validate.sh **Check 10** extended to cover `checklists/` directory in addition to `frameworks/`
+- validate.sh **Check 10** extended to cover `checklists/` directory in addition to `frameworks/` *(fix was incomplete — correctly applied in 2.7.4)*
 - Check 4 canonical source check: verifies `continue` wording in `SKILL.md` and `output-format.md`
 
 ---

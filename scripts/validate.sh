@@ -118,7 +118,6 @@ for f in README.md LICENSE CONTRIBUTING.md CODE_OF_CONDUCT.md CHANGELOG.md SECUR
   fi
 done
 
-
 # ─── Check 8: Example version stamps match SKILL.md ─────────────────────────
 section "Example version stamps"
 SKILL_VER=$(grep -m1 '^version:' "$ROOT/SKILL.md" | sed 's/version: *//')
@@ -149,6 +148,7 @@ while IFS= read -r f; do
   fi
 done < <(grep -oE '(frameworks|checklists)/[a-zA-Z0-9_-]+\.md' "$ROOT/SKILL.md" | sort -u)
 (( MISSING_ISSUES == 0 )) && ok "All SKILL.md framework references resolve to files on disk"
+
 # ─── Check 10: Frameworks on disk are indexed in SKILL.md ─────────────────────
 section "Framework and checklist index coverage"
 UNINDEXED_ISSUES=0

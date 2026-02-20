@@ -50,7 +50,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: AI Context File Architecture
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.7.5
+**Skill version**: 2.7.6
 **Scope**: AI Optimization — AGENTS.md, .github/copilot-instructions.md, README.md
 
 ---
