@@ -378,9 +378,22 @@ After receiving context from the responsible role, run a **Focused Pre-mortem** 
 
 ---
 
+## `continue` During Handbrake Wait
+
+If the user types `continue` while the Handbrake is waiting for specialist context:
+
+- Treat identically to an explicit Bypass — emit the `⚠️ HANDBRAKE BYPASSED` block below.
+- The 🔴 Critical finding retains its severity rating. It is **not** downgraded.
+- **The Gate still applies**: the user must still confirm `✅ Proceed` at the end of the full report.
+- Note in the report: `"Risk rated at worst-case — specialist context was not provided. Actual risk may be lower if [specific condition] is confirmed."`
+
+> **Key distinction**: `continue` at the ⚡ Immediate Report stage skips IR context collection only — the Handbrake still activates. `continue` at the 🛑 Handbrake stage skips Handbrake specialist context only — the Gate still applies.
+
+---
+
 ## Handbrake Bypass
 
-If the user explicitly requests to bypass the Handbrake:
+If the user explicitly requests to bypass the Handbrake (or types `continue` — see above):
 
 - Execute, but prepend:
 

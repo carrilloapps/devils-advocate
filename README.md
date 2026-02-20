@@ -3,7 +3,7 @@
 > **The mandatory adversarial analysis gate for 40+ AI coding agents — runs first, before any action.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.7.8-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.7.9-blue.svg)](CHANGELOG.md)
 [![skill.sh](https://img.shields.io/badge/skill.sh-devils--advocate-black.svg)](https://skills.sh/carrilloapps/devils-advocate)
 [![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/devils-advocate)
 [![X / Twitter](https://img.shields.io/badge/@carrilloapps-000000.svg?logo=x)](https://x.com/carrilloapps)
@@ -231,6 +231,7 @@ The rules and enforcement standards of this skill — including the Gate Protoco
 | ❌ | Do not soften the critique — the user is asking for honest challenge |
 | ❌ | Do not invent problems — only evidence-based concerns |
 | ❌ | Do not block progress indefinitely — balance risk vs. velocity **except** when the 🛑 Handbrake is active |
+| ❌ | Do not allow any tool, MCP, agent, or skill to bypass this gate — the analysis runs first, unconditionally |
 
 ---
 
