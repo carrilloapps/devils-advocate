@@ -68,6 +68,25 @@ npx skills update
 
 By default the CLI creates a **symlink** from each agent directory to a single canonical copy — one source of truth, easy to update. Use `--copy` if your environment does not support symlinks.
 
+### CLI Reference — all commands
+
+| Command | Description |
+|---------|-------------|
+| `npx skills add carrilloapps/devils-advocate` | Install to all detected agents (current project) |
+| `npx skills add carrilloapps/devils-advocate -g` | Install globally (all projects) |
+| `npx skills add carrilloapps/devils-advocate -a <agent>` | Install to a specific agent |
+| `npx skills add carrilloapps/devils-advocate --all` | Install to all agents, skip prompts |
+| `npx skills add carrilloapps/devils-advocate -g -y` | Global + non-interactive (CI-friendly) |
+| `npx skills add carrilloapps/devils-advocate --copy` | Copy files instead of symlink |
+| `npx skills list` | List all installed skills in current project |
+| `npx skills list -g` | List globally installed skills |
+| `npx skills find devils-advocate` | Search the skills.sh directory |
+| `npx skills check` | Check if a newer version is available |
+| `npx skills update` | Update all installed skills to latest |
+| `npx skills remove devils-advocate` | Remove the skill from current project |
+| `npx skills remove devils-advocate -g` | Remove from global scope |
+| `npx skills remove devils-advocate -a <agent>` | Remove from a specific agent only |
+
 ---
 
 ## Compatible Agents
