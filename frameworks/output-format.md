@@ -78,12 +78,14 @@ Standard report structure for Devil's Advocate analysis. Load this file when pro
 1. **[Issue]**
    - **Risk**: What goes wrong
    - **Impact**: Consequence
+   - **Likelihood**: High / Medium / Low *(include when quantifiable)*
    - **Mitigation**: How to fix
 
 ### 🟡 Medium-Priority Issues (Technical debt)
 
 1. **[Issue]**
    - **Risk**: Long-term consequence if ignored
+   - **Likelihood**: Medium / Low *(include when quantifiable)*
    - **Mitigation**: How to address when time allows
 
 ---

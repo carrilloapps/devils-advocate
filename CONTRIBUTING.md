@@ -72,10 +72,13 @@ A new framework file in `frameworks/` must:
    > **Always paired with**: [Cross-references to related files, if any]
    ```
 
-2. **Not duplicate** existing framework coverage — check all 17 existing files
+2. **Not duplicate** existing framework coverage — check all **12 existing domain frameworks**:
+   Architecture · Security · Performance · Developer/Code · Data & Analytics · Product · UX/Design · Strategy/Leadership · AI Optimization · Version Control · Vulnerability Patterns · General Analysis
+
+   > Protocol files (`output-format.md`, `handbrake-protocol.md`, `immediate-report.md`, `building-protocol.md`, `premortem.md`) are separate — they define the skill's execution protocol, not a risk domain. Do not count them toward the 12.
 3. **Include an adversarial lens** — not just "here are best practices" but "here are the risks and how they fail"
 4. **Be accompanied by a new example** in `examples/` that demonstrates the framework in use
-5. **Be added to the Index** in `SKILL.md` under the correct section
+5. **Be added to the Index** in `SKILL.md` under `### 📂 Domain Frameworks` — and update the count in that heading (currently `12 domains`) and in item 2 above
 
 ### New Example
 
@@ -134,7 +137,11 @@ All contributions must pass these checks before merge:
 | en_US identifiers | All code in examples follows the Building Protocol |
 | No stale text | No references to `with implementation`, `14-dimension`, or other legacy phrasing |
 
-The maintainers run an automated sweep script on every PR that checks all of the above.
+The maintainers run an automated sweep script on every PR that checks all of the above. You can run it locally before submitting:
+
+```bash
+bash scripts/validate.sh
+```
 
 ---
 
@@ -155,8 +162,10 @@ The maintainers run an automated sweep script on every PR that checks all of the
 | New framework | 7–14 days |
 | Core protocol change | 14+ days (requires community discussion) |
 
----
+### skill.sh listing
 
-## Code of Conduct
+The [skills.sh/carrilloapps/devils-advocate](https://skills.sh/carrilloapps/devils-advocate) page activates automatically after the first `npx skills add carrilloapps/devils-advocate` is run. The README badge and install command are correct and will resolve once the skill is published. The skills.sh badge in the README may show a 404 until first publish — this is expected.
+
+---
 
 All contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md). Be direct, be honest, be kind.

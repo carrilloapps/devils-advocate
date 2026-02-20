@@ -50,7 +50,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: PostgreSQL Migration Plan
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.4.1
+**Skill version**: 2.7.0
 **Scope**: Production database migration — 2TB, new provider, 4-hour maintenance window
 
 ---

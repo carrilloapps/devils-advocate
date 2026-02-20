@@ -1,0 +1,8 @@
+# Normalize line endings on commit
+* text=auto
+
+# Force LF for shell scripts (must be LF for bash compatibility)
+scripts/*.sh text eol=lf
+
+# Force LF for GitHub Actions workflows
+.github/workflows/*.yml text eol=lf

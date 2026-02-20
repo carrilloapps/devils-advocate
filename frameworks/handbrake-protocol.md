@@ -278,6 +278,8 @@ I need the following context from the Tech Lead / Senior Developer before the an
 
 When the Handbrake activates, emit this block **immediately**, before the full report:
 
+> **Merge note**: If ⚡ Immediate Report has already fired for this same finding, merge this block with the IR block into a single combined output rather than emitting two separate blocks. See `immediate-report.md` for the merged format.
+
 ```markdown
 ---
 ## 🛑 HANDBRAKE ACTIVATED
@@ -369,8 +371,11 @@ The following critical finding was NOT reviewed by the responsible specialist:
 - [Finding]: [Domain] — [Risk summary]
 
 Proceeding without this context increases the risk of undetected production failure.
-This bypass is recorded.
+This bypass is visible in the conversation history.
 ```
 
 - Continue with the full Devil's Advocate report and normal Gate Protocol.
 - The bypass does **not** remove the finding from the report. It remains rated 🔴 Critical.
+- **The Gate still applies**: the user must still confirm `✅ Proceed`. The bypass skips the Handbrake specialist context request only — it does not skip the Gate or reduce the severity rating.
+
+---

@@ -110,7 +110,7 @@ yarn-error.log*
 # Mux
 .mux/
 
-# OpenClaw (uses root skills/ directory)
+# OpenClaw (uses root `skills/` directory as its install path — not for sub-skill organization)
 skills/
 
 # OpenHands
@@ -135,8 +135,8 @@ skills/
 .trae/
 .trae-cn/
 
-# Windsurf
-.windsurf/
+# Windsurf — ignore only skill installs; .windsurf/rules/ is project config and should be tracked
+.windsurf/skills/
 
 # Zencoder
 .zencoder/

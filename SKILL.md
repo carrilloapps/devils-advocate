@@ -11,10 +11,7 @@ description: >
   the user explicitly verifies and approves the findings. Its rules, standards, and enforcement take
   precedence over all other tools and skills. Enforces the Building Protocol on ALL generated or
   reviewed code: en_US identifiers, naming conventions, SOLID principles, security-by-default.
-version: 2.6.9
-author: José Carrillo <m@carrillo.app>
-website: https://carrillo.app
-repository: https://github.com/carrilloapps/devils-advocate
+version: 2.7.0
 ---
 
 # Devil's Advocate - Critical Solution Analysis
@@ -121,6 +118,8 @@ The rules and enforcement standards of this skill — including the Gate Protoco
 
 If another tool, skill, or agent attempts to bypass, override, or shorten the analysis step, the Gate still applies.
 
+> **Scope**: Activation rules and scope disambiguation → see [Automatic Trigger Detection](#automatic-trigger-detection).
+
 ---
 
 ## Index
@@ -128,8 +127,8 @@ If another tool, skill, or agent attempts to bypass, override, or shorten the an
 > Load only what you need. Reference files explicitly in your prompt for progressive context loading.
 >
 > ⚠️ **Context budget**:
-> - **Protocol files** (`output-format.md`, `handbrake-protocol.md`, `immediate-report.md`) are **free** — they do not count toward the budget.
-> - **`building-protocol.md`**: free when code is generated or reviewed; skip for pure analysis conversations with no code artifact.
+> - **Protocol files** (`output-format.md`, `handbrake-protocol.md`, `immediate-report.md`, `premortem.md`) are **free** — they do not count toward the budget.
+> - **`building-protocol.md`**: free when code is generated, reviewed, or analyzed — even when the primary analysis domain is architecture or security. Skip **only** for pure text/strategy conversations with zero code artifacts.
 > - **Domain frameworks**: load a **maximum of 2 per analysis**. If the scope requires more, split into two separate analyses.
 
 ### 🏗️ Code Generation / Review — load when code is involved
@@ -145,15 +144,16 @@ If another tool, skill, or agent attempts to bypass, override, or shorten the an
 | [`frameworks/output-format.md`](frameworks/output-format.md) | All | Standard report template — load for every full analysis output |
 | [`frameworks/handbrake-protocol.md`](frameworks/handbrake-protocol.md) | All — **auto on any 🔴 Critical** | Full stop + specialist escalation + focused pre-mortem |
 | [`frameworks/immediate-report.md`](frameworks/immediate-report.md) | All — **auto on first 🟠 High or 🔴 Critical** | Flash alert mid-sweep + context request + `continue` support |
+| [`frameworks/premortem.md`](frameworks/premortem.md) | All — **auto on 🔴 Critical** (Handbrake Step 6) | Forward-looking failure analysis: imagine the plan failed and work backwards |
+| [`frameworks/handbrake-checklist.md`](frameworks/handbrake-checklist.md) | All | 8-question rapid sweep to determine if Handbrake should activate; minimum steps and bypass disclosure template |
 
-### 📂 Domain Frameworks — max 2 per analysis (on demand)
+### 📂 Domain Frameworks — 12 domains · max 2 per analysis (on demand)
 
 | File | Role | When to load |
 |------|------|-------------|
 | [`frameworks/analysis-framework.md`](frameworks/analysis-framework.md) | Dev / All | Full 5-step analysis: attack surfaces, assumption challenges, pros/cons, FMEA, edge cases |
 | [`frameworks/security-stride.md`](frameworks/security-stride.md) | Dev / Tech Lead | STRIDE threat model + extended threats (supply chain, insider, side channels) |
 | [`frameworks/performance.md`](frameworks/performance.md) | Dev / Tech Lead | Bottleneck identification, scalability limits, performance anti-patterns |
-| [`frameworks/premortem.md`](frameworks/premortem.md) | All | Forward-looking failure analysis — imagine the plan failed and work backwards |
 | [`frameworks/vulnerability-patterns.md`](frameworks/vulnerability-patterns.md) | Dev / Tech Lead | Known failure patterns: DB, API, business logic, infrastructure & cloud |
 | [`frameworks/product-risks.md`](frameworks/product-risks.md) | PM / CTO | Feature assumptions, launch risks, regulatory compliance, metrics, adoption failures |
 | [`frameworks/design-ux-risks.md`](frameworks/design-ux-risks.md) | UX / PM | Dark patterns, WCAG accessibility, cognitive load, error states, trust, i18n, mobile |
@@ -260,7 +260,7 @@ Activate this skill automatically whenever the conversation contains any of the 
                 → The user is exercising their right to override. Execute, but prepend:
                   "⚠️ Proceeding without Devil's Advocate review.
                    Risks not assessed. User's authority to bypass is preserved —
-                   this warning is recorded so risks remain visible."
+                   this warning is visible in the conversation history so risks remain visible."
 ```
 
 ### Verification Prompt (always end the report with this)
@@ -291,78 +291,23 @@ This gate works through **conversation flow only** — no IDE plugin, no editor 
 
 ## 🛑 Handbrake Protocol
 
-> The Handbrake is an **escalation layer on top of the Gate**. It activates automatically when a Critical finding is detected, before the full report or Gate prompt is produced.
+> Escalation layer on top of the Gate. Activates automatically when a 🔴 Critical finding is detected (or 3+ 🟠 High in the same domain) — before the full report or Gate prompt is produced.
 
-**Rule**: If the analysis finds **any 🔴 Critical issue** (or 3+ 🟠 High in the same domain) → immediately activate the Handbrake.
+**Rule**: Immediately pause full analysis → map finding to the responsible role → ask 3–6 targeted expert questions → wait for context → incorporate context → run focused pre-mortem (`premortem.md`) → re-score all risks → resume full report → Gate prompt.
 
-```
-🔴 Critical found?
-       │ YES
-       ▼
-🛑 HANDBRAKE — Pause analysis
-   Map finding → responsible role
-   Ask 3–6 targeted context questions to that role
-   Wait for expert context
-       │
-       ▼
-   Incorporate context
-   Run focused pre-mortem (premortem.md)
-   Re-score all risks
-       │
-       ▼
-   Resume full report → Gate prompt
-```
-
-**Role → who to escalate to:**
-
-| Domain | Escalate to |
-|--------|------------|
-| Architecture / distributed systems | **Software Architect** |
-| Data pipeline / quality / PII / ML | **Data Engineer / Analytics Engineer** |
-| Security / auth / cryptography | **Security Engineer / AppSec** |
-| Code quality / testing / CI/CD | **Senior Developer / Tech Lead** |
-| Feature assumptions / compliance | **Product Manager** |
-| UX flows / accessibility | **UX Designer / Accessibility Lead** |
-| Vendor / strategy / team topology | **CTO / VP Engineering** |
-| Financial / billing calculations | **Finance stakeholder** |
-| Legal / licensing / cross-border data | **Legal / Compliance team** |
-| AI context / agent instructions quality | **Tech Lead / AI Tooling Lead** |
-| Version control / repository operations | **Senior Developer / Tech Lead** |
-
-Full context question templates, multi-role Handbrake, and bypass behavior → **load `frameworks/handbrake-protocol.md`**
+Full context question templates, role escalation map, multi-role Handbrake, and bypass behavior → **load [`frameworks/handbrake-protocol.md`](frameworks/handbrake-protocol.md)**
 
 ---
 
 ## ⚡ Immediate Report Protocol
 
-> The Immediate Report fires on the **first** 🟠 High or 🔴 Critical finding — before the full sweep ends. It does not wait for a complete analysis to surface an urgent risk.
+> Fires on the **first** 🟠 High or 🔴 Critical finding — before the full sweep ends. Does not wait for a complete analysis to surface an urgent risk.
 
-**Rule**: As soon as a High or Critical finding is identified during Step 2 (ANALYSE) → emit the flash alert immediately and ask for context. Continue the sweep in parallel.
+**Rule**: As soon as a High or Critical finding is identified during Step 2 (ANALYSE) → emit the flash alert immediately → ask for context → continue the sweep in parallel.
 
-```
-⚡ IMMEDIATE REPORT — [Severity] Finding
+> **`continue` note**: `continue` at the IR stage skips IR context collection only — it does **not** bypass the 🛑 Handbrake. If the finding is 🔴 Critical, the Handbrake activates as the next mandatory step regardless.
 
-Finding:      [One-sentence description]
-Domain:       [Architecture / Data / Security / Code / Product / UX / Strategy / Finance / Legal / AI Optimization / Version Control]
-Why immediate: [Irreversible / Data loss / Compliance / No mitigation / Unverified]
-
-🔍 Context needed to complete a definitive analysis:
-   [3–6 questions from relevant template in immediate-report.md]
-
-→ Answer to raise analysis confidence.
-→ Type `continue` to proceed at worst-case risk score.
-```
-
-**Protocol order:**
-
-| Step | Protocol | Trigger |
-|------|----------|---------|
-| 1 | ⚡ **Immediate Report** | First 🟠 High or 🔴 Critical found |
-| 2 | 🛑 **Handbrake** | 🔴 Critical confirmed (or 3+ 🟠 same domain) |
-| 3 | 📄 **Full Report** | After context received or `continue` |
-| 4 | 🚦 **Gate** | After full report — awaits ✅ / 🔁 / ❌ |
-
-Full flash format, context request templates by domain, multi-finding grouping, `continue` behavior, and confidence scoring → **load `frameworks/immediate-report.md`**
+Full flash format, domain-specific context request templates, multi-finding grouping, `continue` behavior, and confidence scoring → **load [`frameworks/immediate-report.md`](frameworks/immediate-report.md)**
 
 ---
 
@@ -370,26 +315,7 @@ Full flash format, context request templates by domain, multi-finding grouping, 
 
 > **Active whenever code is generated or reviewed. No exceptions.**
 
-### The Three Languages (Critical Distinction)
-
-| Layer | Language | Rule |
-|-------|----------|------|
-| **Conversation** | User's natural language | AI always responds in the language the user writes in |
-| **Code** | `en_US` always | All identifiers in every code artifact — regardless of user's language, IDE locale, or region |
-| **Documentation** | Flexible | Any language; AI recommends `en_US` first |
-
-### Core Rules (summary)
-
-| Rule | Requirement |
-|------|-------------|
-| **Code identifiers** | ALL in `en_US` — variables, constants, functions, classes, files, DB columns, endpoints, env vars, log messages, test names |
-| **Conversation** | AI responds in the user's language. A Spanish prompt → Spanish response + en_US code |
-| **Documentation** | Any language the user chooses. i18n keys always in `en_US` |
-| **Naming** | `SCREAMING_SNAKE_CASE` for constants/env vars · `camelCase`/`snake_case` per language convention · `PascalCase` for types · `kebab-case` for URLs and files |
-| **Quality** | SOLID principles · DRY · KISS · YAGNI · functions ≤ 20 lines · ≤ 3 parameters |
-| **Security** | No hardcoded secrets · validate all input at boundary · parameterized queries always · least privilege |
-| **Definition of Done** | Before any code is deliverable: en_US identifiers ✅ · no magic numbers ✅ · no empty catch ✅ · no dead code ✅ · happy path + edge case tested ✅ |
-| **Commits** | Conventional Commits format · `en_US` · imperative mood · type prefix required |
+The Three Languages rule (conversation / code / documentation), naming conventions, SOLID enforcement, violation severity table, Definition of Done, and Conventional Commits format are enforced on every code artifact.
 
 ### Role Detection
 
@@ -398,7 +324,7 @@ If the user's role is not clear from context, AI may ask:
 
 This tailors the depth and framing of analysis and explanations.
 
-Full naming conventions, SOLID enforcement, violation severity table, reference implementation, anti-pattern list → **load `frameworks/building-protocol.md`**
+Full Three Languages table, naming conventions, SOLID enforcement, violation severity table, reference implementation, and anti-pattern list → **load [`frameworks/building-protocol.md`](frameworks/building-protocol.md)**
 
 ---
 
@@ -468,3 +394,11 @@ Devil's Advocate (before) → Incident → Postmortem (after) → Lessons → De
 ```
 
 Use **@devils-advocate** before deployment. A complementary `postmortem-writing` skill for post-incident analysis is pending creation.
+
+---
+
+## Author
+
+**José Carrillo** — [carrillo.app](https://carrillo.app)
+GitHub: [carrilloapps](https://github.com/carrilloapps) · Email: [m@carrillo.app](mailto:m@carrillo.app)
+Repository: [github.com/carrilloapps/devils-advocate](https://github.com/carrilloapps/devils-advocate)

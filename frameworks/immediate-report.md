@@ -99,6 +99,8 @@ Reply with:
 
 ## Context Request Templates
 
+> One template per domain (13 total: Unmitigated Critical + 12 domain-specific). Use the template that matches the finding domain. If the finding spans multiple domains, use the closest match or the generic Unmitigated Critical template.
+
 These are the questions to ask per finding type. Select the most relevant 3–6.
 
 ---
@@ -259,7 +261,18 @@ These are the questions to ask per finding type. Select the most relevant 3–6.
 
 ---
 
-## Multi-Finding Immediate Report
+### 🔍 General Analysis — Assumptions / Cross-Cutting / Unknown Unknowns
+
+```markdown
+1. **Scope boundary**: What is the exact scope of this change — which systems, services, data stores, and users are affected? What is explicitly out of scope?
+2. **Assumptions made**: What assumptions are baked into this plan that have not been explicitly validated? Who validated them, and when?
+3. **Unknown unknowns**: What parts of this system or codebase are least understood by the team proposing this change? Who holds the most context on those areas?
+4. **Dependencies**: What does this change depend on that is outside this team's control — third-party services, other teams' APIs, scheduled jobs, infrastructure config?
+5. **Reversibility**: If this change turns out to be wrong, what is the rollback path? How long does rollback take, and what data loss or service disruption does it cause?
+6. **Evidence basis**: What evidence, data, or prior incident reports support the risk concern raised? Has this failure mode occurred before in this system or a comparable one?
+```
+
+---
 
 When multiple High/Critical findings are detected in the same sweep, group them:
 
@@ -322,7 +335,8 @@ When the user types `continue` without providing context:
 - Mark all findings with unanswered questions as **⚠️ Unverified Context**
 - Assign **conservative (worst-case) risk score** to those findings
 - Note in the report: `"Risk rated at worst-case due to missing context. Actual risk may be lower if [specific condition] is confirmed."`
-- Proceed to the full report and Gate prompt normally
+- If the finding is 🔴 Critical: the 🛑 **Handbrake activates as the next step** — `continue` skips IR context collection only, it does **not** bypass the Handbrake
+- If the finding is 🟠 High only: proceed to the full report and Gate prompt normally
 
 ---
 
@@ -334,5 +348,5 @@ When the user types `continue` without providing context:
 | 🔴 Critical found | ⚡ Immediate Report fires first. Then 🛑 Handbrake activates. |
 | Multiple Critical findings | ⚡ Multi-Finding Immediate Report. 🛑 Multi-Role Handbrake. |
 | User answers context before analysis ends | Incorporate immediately into remaining analysis steps |
-| User types `continue` | Mark as unverified, worst-case score, proceed |
+| User types `continue` | Mark as unverified, worst-case score; proceed to Handbrake (if Critical) or full report (if High only) |
 | User bypasses | ⚠️ Warning prepended, proceed with Gate |

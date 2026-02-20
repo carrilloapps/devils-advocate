@@ -1,0 +1,22 @@
+name: Validate Skill Quality
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  validate:
+    name: Run validate.sh
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make validate.sh executable
+        run: chmod +x scripts/validate.sh
+
+      - name: Run skill quality checks
+        run: bash scripts/validate.sh

@@ -12,14 +12,16 @@
 
 | File | Tool / Platform | Purpose |
 |------|----------------|---------|
-| `AGENTS.md` | GitHub Copilot CLI, generic agents | Agent skill and behavior instructions |
+| `AGENTS.md` | GitHub Copilot CLI, Codex, OpenCode, Amp, Gemini CLI and most agents | Agent skill and behavior instructions |
 | `SKILL.md` | skills.sh (40+ agents: GitHub Copilot, Claude Code, Cursor, Windsurf, Cline, Codex, and more) | Skill definition and protocol |
 | `.github/copilot-instructions.md` | GitHub Copilot (VS Code, Web) | Workspace-level AI instructions |
 | `CLAUDE.md` | Claude Code / Claude Projects | Project-level context for Claude |
-| `.cursorrules` | Cursor editor | Cursor AI behavior rules |
+| `.cursorrules` or `.cursor/rules/*.mdc` | Cursor editor | Cursor AI behavior rules |
 | `.windsurf/rules/*.md` or `.windsurfrules` | Windsurf editor | Windsurf AI behavior rules |
 | `.clinerules` | Cline | Cline AI behavior rules |
 | `.roo/rules/*.md` | Roo Code | Roo AI behavior rules |
+| `.gemini/GEMINI.md` | Gemini CLI | Gemini CLI project context |
+| `.kiro/steering/*.md` | Kiro CLI | Kiro steering documents (always-on context) |
 | `.ai-context.md` | Generic / custom | Project context for any AI |
 | `README.md` | All tools | Primary human + AI documentation |
 | `docs/` | All tools | Extended documentation context |

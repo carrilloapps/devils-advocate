@@ -28,7 +28,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🟠 Devil's Advocate Analysis: Subscription Checkout UX Flow
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.4.1
+**Skill version**: 2.7.0
 **Scope**: UX / Legal — SaaS subscription checkout flow; US, EU, UK markets
 
 ---

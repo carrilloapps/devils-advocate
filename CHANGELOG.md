@@ -6,6 +6,39 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [Unreleased]
+
+### Planned
+- `postmortem-writing` companion skill for post-incident analysis
+
+---
+
+## [2.7.0] — 2026-02-20
+
+### Added
+- `frameworks/handbrake-checklist.md` — new 8-question rapid-sweep checklist to determine if Handbrake should activate; includes minimum steps and bypass disclosure template
+- `.gitattributes` — enforces LF line endings on `scripts/validate.sh` and GitHub Actions workflows for cross-platform compatibility
+- `.github/workflows/validate.yml` — GitHub Actions CI: runs `bash scripts/validate.sh` on every push and PR to `main`
+
+### Fixed
+- **Critical — IR `continue` vs Handbrake conflict**: `continue` at the IR stage now explicitly documented to skip IR context collection only, NOT bypass the Handbrake; if finding is 🔴 Critical the Handbrake still activates as the next mandatory step (`immediate-report.md`, `SKILL.md`)
+- **High — validate.sh CRLF line endings**: re-saved with LF only; Windows contributors can now run `bash scripts/validate.sh` in Git Bash without `$'\r': command not found` errors
+- **High — example version stamps stale**: all 12 examples updated from `v2.4.1` to current `v2.6.9`; new validate.sh check 8 enforces version stamp consistency going forward
+- **High — premortem.md budget conflict**: reclassified from Domain Framework (counted against 2-framework budget) to Protocol File (free); Handbrake Step 6 mandates it, so it was self-defeating to count it; domain count updated 13 → 12 in `SKILL.md`, `CONTRIBUTING.md`
+- **High — "bypass is recorded" wording**: replaced with "visible in the conversation history" in `SKILL.md` Gate Protocol and `handbrake-protocol.md` — the previous wording implied non-existent persistence
+- **Medium — duplicate scope guard**: removed shorter/incomplete scope guard from `Rule Precedence` section; single authoritative definition remains in `Automatic Trigger Detection` with full Disambiguation rule
+- **Medium — IR+Handbrake merge cross-reference missing**: added merge note to `handbrake-protocol.md` Output Block section pointing to `immediate-report.md` for combined format
+- **Medium — `handbrake-checklist.md` referenced but missing**: created the file; added to SKILL.md Index under Protocol Files
+
+### Changed
+- **SKILL.md slimmed** (~25% size reduction): removed duplicated Handbrake flow diagram, role escalation table, IR flash format template, and Building Protocol tables — these are all defined authoritatively in their dedicated framework files; SKILL.md now contains minimal summaries with explicit load references
+- `premortem.md` moved from Domain Frameworks section to Protocol Files section in SKILL.md Index
+- `CONTRIBUTING.md`: domain count updated to 12; `premortem.md` added to protocol files exclusion list
+- validate.sh check 7: added `.gitattributes` and `.github/workflows/validate.yml` to required files list
+- validate.sh: added check 8 — example version stamps must match `SKILL.md` version
+
+---
+
 ## [2.6.9] — 2026-02-20
 
 ### Added
