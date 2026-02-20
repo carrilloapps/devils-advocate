@@ -108,6 +108,12 @@ An example file in `examples/` must:
 
 5. **Be added to the Index** in `SKILL.md` under `### 📂 examples/`
 
+6. **Include the version stamp** in the full report header:
+   ```markdown
+   **Skill version**: [current version from SKILL.md frontmatter — e.g. 2.7.8]
+   ```
+   `validate.sh` Check 8 enforces this and will fail if it is missing or mismatched.
+
 ### Improving Existing Files
 
 - Keep changes minimal and surgical
@@ -133,6 +139,7 @@ All contributions must pass these checks before merge:
 | Fence balance | Every ` ``` ` opener has a matching closer |
 | Gate prompt | Every example ends with the exact Gate prompt from `SKILL.md` |
 | `continue` line | Must say `(risks remain active and unmitigated)` — not `(risks remain active)` |
+| Version stamp | Every example must contain `**Skill version**: X.Y.Z` matching the current SKILL.md version |
 | Cross-references | Any file added to `frameworks/`, `checklists/`, or `examples/` must be added to the `SKILL.md` Index |
 | Domain coverage | New frameworks must not duplicate an existing domain |
 | en_US identifiers | All code in examples follows the Building Protocol |

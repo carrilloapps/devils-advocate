@@ -11,6 +11,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.7.8] — 2026-02-20
+
+### Fixed
+- **Medium — CONTRIBUTING.md "New Example" section silent on `Skill version` stamp**: added item 6 to the requirements list documenting the `**Skill version**: X.Y.Z` stamp and the validate.sh Check 8 that enforces it; contributors adding examples without the stamp were getting unexplained CI failures
+- **Medium — Quality Standards table missing version stamp row**: added `Version stamp` row so contributors see the requirement before submitting a PR
+
+---
+
 ## [2.7.7] — 2026-02-20
 
 ### Fixed
