@@ -27,11 +27,16 @@ It is not a linter. It is not a checklist. It is an adversarial analyst that:
 npx skills add carrilloapps/devils-advocate
 ```
 
-Or install globally (available in every project):
+### All install options
 
-```bash
-npx skills add carrilloapps/devils-advocate -g
-```
+| Command | Effect |
+|---------|--------|
+| `npx skills add carrilloapps/devils-advocate` | Install to all detected agents in current project |
+| `npx skills add carrilloapps/devils-advocate -g` | Install globally (available in every project) |
+| `npx skills add carrilloapps/devils-advocate -a github-copilot` | Install to a specific agent only |
+| `npx skills add carrilloapps/devils-advocate -a claude-code -a cursor` | Install to multiple specific agents |
+| `npx skills add carrilloapps/devils-advocate --all` | Install to all agents, skip confirmations |
+| `npx skills add carrilloapps/devils-advocate -g -y` | Global install, non-interactive (CI-friendly) |
 
 Target a specific agent:
 
@@ -42,7 +47,26 @@ npx skills add carrilloapps/devils-advocate -a cursor
 npx skills add carrilloapps/devils-advocate -a windsurf
 ```
 
+### Keeping it up to date
+
+```bash
+# Check if a newer version is available
+npx skills check
+
+# Update to the latest version
+npx skills update
+```
+
 > See [skills.sh/carrilloapps/devils-advocate](https://skills.sh/carrilloapps/devils-advocate) for the canonical install command and latest release.
+
+### Where files are installed
+
+| Scope | Path |
+|-------|------|
+| Project (default) | `./<agent>/skills/devils-advocate/SKILL.md` |
+| Global (`-g`) | `~/<agent>/skills/devils-advocate/SKILL.md` |
+
+By default the CLI creates a **symlink** from each agent directory to a single canonical copy — one source of truth, easy to update. Use `--copy` if your environment does not support symlinks.
 
 ---
 

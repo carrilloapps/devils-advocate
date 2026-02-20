@@ -16,6 +16,7 @@ Thank you for your interest in improving Devil's Advocate! This skill is built o
   - [Bug Reports](#bug-reports)
 - [Quality Standards](#quality-standards)
 - [Pull Request Process](#pull-request-process)
+- [Releasing a New Version](#releasing-a-new-version)
 - [Code of Conduct](#code-of-conduct)
 
 ---
@@ -170,9 +171,53 @@ bash scripts/validate.sh
 | New framework | 7–14 days |
 | Core protocol change | 14+ days (requires community discussion) |
 
-### skill.sh listing
+### skills.sh indexing
 
-The [skills.sh/carrilloapps/devils-advocate](https://skills.sh/carrilloapps/devils-advocate) page activates automatically after the first `npx skills add carrilloapps/devils-advocate` is run. The README badge and install command are correct and will resolve once the skill is published. The skills.sh badge in the README may show a 404 until first publish — this is expected.
+The skill is distributed directly from GitHub — no manual submission to skills.sh is required. Once the repository is public and contains a valid `SKILL.md`, anyone can install it with:
+
+```bash
+npx skills add carrilloapps/devils-advocate
+```
+
+The [skills.sh](https://skills.sh) leaderboard and `npx skills find` search index are **telemetry-driven**: skills appear automatically once they accumulate installs through the CLI. There is no registration form or publish command.
+
+---
+
+## Releasing a New Version
+
+> **Maintainers only.** Contributors should not change version numbers.
+
+When merging a batch of fixes, follow this checklist to cut a release:
+
+1. **Run the validator** — must be 0 failures before bumping:
+   ```bash
+   bash scripts/validate.sh
+   ```
+
+2. **Bump the version** — update `version:` in `SKILL.md` frontmatter (e.g. `2.7.8` → `2.7.9`)
+
+3. **Cascade the version** to all versioned files:
+   - `README.md` — badge `version-X.Y.Z-blue`
+   - All 12 `examples/*.md` — `**Skill version**: X.Y.Z` line
+
+4. **Add a CHANGELOG entry** — under a new `## [X.Y.Z] — YYYY-MM-DD` section (above all prior versions, below `[Unreleased]`):
+   ```markdown
+   ## [X.Y.Z] — YYYY-MM-DD
+
+   ### Fixed
+   - **Severity — Short description**: what was wrong and what the fix does
+   ```
+
+5. **Run the validator again** — confirm 0 failures with the new version
+
+6. **Commit and push**:
+   ```bash
+   git add -A
+   git commit -m "feat: release version X.Y.Z — <summary>"
+   git push
+   ```
+
+The skills.sh install counter updates automatically as users run `npx skills update` or install fresh.
 
 ---
 
