@@ -45,7 +45,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: GitHub Actions CI/CD Pipeline Setup
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.7.2
+**Skill version**: 2.7.3
 **Scope**: Version Control / Security — GitHub Actions workflow for test + Docker build + staging deploy; internal repository
 
 ---
@@ -213,7 +213,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Deploy to staging
-        uses: appleboy/ssh-action@v1.0.0  # pin this SHA too
+        uses: appleboy/ssh-action@v1.0.0  # ⚠️ MUTABLE TAG — replace with SHA-pinned ref (e.g. appleboy/ssh-action@7eaf98bf61c1cd37f10400b0b25b44abd61ea2a9) before use
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}

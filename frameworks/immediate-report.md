@@ -75,7 +75,7 @@ Emit this block **the moment** the finding is identified, before continuing:
 ## ⚡ IMMEDIATE REPORT — [🔴 Critical / 🟠 High] Finding
 
 **Finding**: [One-sentence description]
-**Domain**: [Architecture / Data / Security / Code / Product / UX / Strategy / ...]
+**Domain**: [Architecture / Data / Security / Code / Product / UX / Strategy / Finance / Legal / AI Optimization / Version Control / Performance]
 **Why immediate**: [Irreversible / Data loss / Security breach / Compliance / No mitigation / Unverified assumption]
 **Risk if not addressed**: [Concrete consequence — not abstract]
 
@@ -271,6 +271,7 @@ These are the questions to ask per finding type. Select the most relevant 3–6.
 6. **Deployment risk**: Will this change affect a hot path serving live traffic? Is there a feature flag or canary rollout strategy available?
 ```
 
+---
 
 ### 🔍 General Analysis — Assumptions / Cross-Cutting / Unknown Unknowns
 

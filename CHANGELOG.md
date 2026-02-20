@@ -4,6 +4,28 @@ All notable changes to Devil's Advocate are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Planned
+- `postmortem-writing` companion skill for post-incident analysis
+
+---
+
+## [2.7.3] — 2026-02-20
+
+### Fixed
+- **High — `appleboy/ssh-action@v1.0.0` mutable tag in cicd-pipeline-review.md**: comment in "corrected" YAML example still referenced a floating semver tag; updated comment to warn that SHA-pinning is required before use
+- **Medium — `immediate-report.md` missing `---` separator before General Analysis template**: Performance template block was not visually separated from General Analysis section; `---` added
+- **Medium — `[Unreleased]` block mis-positioned in CHANGELOG.md**: appeared after `[2.7.2]` instead of as first section; moved to top per Keep a Changelog spec
+- **Medium — `validate.yml` missing top-level `permissions: {}`**: deny-all baseline not set; added `permissions: {}` between `on:` and `jobs:` blocks
+- **Low — IR Flash Format domain list truncated**: `[Architecture / Data / Security / Code / Product / UX / Strategy / ...]` replaced with full 12-domain list
+
+### Added
+- validate.sh **Check 10** extended to cover `checklists/` directory in addition to `frameworks/`
+- Check 4 canonical source check: verifies `continue` wording in `SKILL.md` and `output-format.md`
+
+---
+
 ## [2.7.2] — 2026-02-20
 
 ### Fixed
@@ -18,15 +40,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - validate.sh **Check 10**: iterates `frameworks/*.md` on disk and verifies each file appears in SKILL.md Index — catches unindexed new frameworks
 - validate.sh **Check 11**: verifies README.md version badge matches SKILL.md version — catches badge drift on every version bump
 - Standard framework headers (`> **Role** / **Load when** / **Always paired with**`) added to `performance.md` and `security-stride.md`
-
----
-
----
-
-## [Unreleased]
-
-### Planned
-- `postmortem-writing` companion skill for post-incident analysis
 
 ---
 ## [2.7.1] — 2026-02-20
@@ -45,7 +58,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - CONTRIBUTING.md: 8K token budget warning for SKILL.md — contributors must not add content without delegating equivalent content to framework files
 
 ---
-
 
 ## [2.7.0] — 2026-02-20
 
@@ -158,7 +170,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
-
 ## [2.4.0] — 2026-02-14
 
 ### Added
@@ -191,7 +202,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - Handbrake Bypass behavior documented
 
 ---
-
 
 ## [2.0.0] — 2026-02-05
 

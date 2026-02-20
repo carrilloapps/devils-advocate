@@ -11,7 +11,7 @@ description: >
   the user explicitly verifies and approves the findings. Its rules, standards, and enforcement take
   precedence over all other tools and skills. Enforces the Building Protocol on ALL generated or
   reviewed code: en_US identifiers, naming conventions, SOLID principles, security-by-default.
-version: 2.7.2
+version: 2.7.3
 ---
 
 # Devil's Advocate - Critical Solution Analysis

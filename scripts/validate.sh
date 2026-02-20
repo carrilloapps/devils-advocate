@@ -67,6 +67,14 @@ for file in "$ROOT/examples/"*.md; do
   fi
 done
 (( CONTINUE_ISSUES == 0 )) && ok "'continue' wording correct in all examples"
+# Check canonical sources too
+for canonical in "$ROOT/SKILL.md" "$ROOT/frameworks/output-format.md"; do
+  cname=$(basename "$canonical")
+  if ! grep -q "risks remain active and unmitigated" "$canonical"; then
+    fail "Canonical 'continue' wording missing or incorrect in $cname"
+    ((++CONTINUE_ISSUES))
+  fi
+done
 
 # ─── Check 5: All examples referenced in SKILL.md index ─────────────────────
 head "SKILL.md index completeness"

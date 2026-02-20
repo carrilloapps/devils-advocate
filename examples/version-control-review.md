@@ -52,7 +52,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: Leaked Credentials — Git History Remediation
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.7.2
+**Skill version**: 2.7.3
 **Scope**: Version Control + Security — emergency credential removal from git history, `main` + 2 feature branches, private GitHub repository
 
 ---

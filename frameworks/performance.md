@@ -4,9 +4,6 @@
 > **Load when**: The plan involves high-traffic endpoints, data-intensive operations, infrastructure scaling, real-time systems, N+1 queries, DB pool exhaustion, or cache strategy.
 > **Always paired with**: `frameworks/building-protocol.md` when code is involved; `frameworks/architecture-risks.md` for bottlenecks at the infrastructure layer.
 
-
-Load this file when the plan involves high-traffic endpoints, data-intensive operations, infrastructure scaling, or real-time systems.
-
 Reference: [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
 
 ---

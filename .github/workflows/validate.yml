@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: ["main", "master"]
 
+permissions: {}
+
 jobs:
   validate:
     name: Run validate.sh
