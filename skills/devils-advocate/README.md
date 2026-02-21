@@ -4,8 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.8.0-blue.svg)](CHANGELOG.md)
-[![skill.sh](https://img.shields.io/badge/skill.sh-devils--advocate-black.svg)](https://skills.sh/carrilloapps/devils-advocate)
-[![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/devils-advocate)
+[![skill.sh](https://img.shields.io/badge/skill.sh-devils--advocate-black.svg)](https://skills.sh/carrilloapps/skills/devils-advocate)
+[![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/skills)
 [![X / Twitter](https://img.shields.io/badge/@carrilloapps-000000.svg?logo=x)](https://x.com/carrilloapps)
 
 ---
@@ -24,27 +24,27 @@ It is not a linter. It is not a checklist. It is an adversarial analyst that:
 ## Quick Install
 
 ```bash
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate
+npx skills add carrilloapps/skills@devils-advocate
 ```
 
 ### All install options
 
 | Command | Effect |
 |---------|--------|
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate` | Install to all detected agents in current project |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -g` | Install globally (available in every project) |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a github-copilot` | Install to a specific agent only |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a claude-code -a cursor` | Install to multiple specific agents |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate --all` | Install to all agents, skip confirmations |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -g -y` | Global install, non-interactive (CI-friendly) |
+| `npx skills add carrilloapps/skills@devils-advocate` | Install to all detected agents in current project |
+| `npx skills add carrilloapps/skills@devils-advocate -g` | Install globally (available in every project) |
+| `npx skills add carrilloapps/skills@devils-advocate -a github-copilot` | Install to a specific agent only |
+| `npx skills add carrilloapps/skills@devils-advocate -a claude-code -a cursor` | Install to multiple specific agents |
+| `npx skills add carrilloapps/skills@devils-advocate --all` | Install to all agents, skip confirmations |
+| `npx skills add carrilloapps/skills@devils-advocate -g -y` | Global install, non-interactive (CI-friendly) |
 
 Target a specific agent:
 
 ```bash
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a github-copilot
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a claude-code
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a cursor
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a windsurf
+npx skills add carrilloapps/skills@devils-advocate -a github-copilot
+npx skills add carrilloapps/skills@devils-advocate -a claude-code
+npx skills add carrilloapps/skills@devils-advocate -a cursor
+npx skills add carrilloapps/skills@devils-advocate -a windsurf
 ```
 
 ### Keeping it up to date
@@ -57,7 +57,7 @@ npx skills check
 npx skills update
 ```
 
-> See [skills.sh/carrilloapps/devils-advocate](https://skills.sh/carrilloapps/devils-advocate) for the canonical install command and latest release.
+> See [skills.sh/carrilloapps/skills/devils-advocate](https://skills.sh/carrilloapps/skills/devils-advocate) for the canonical install command and latest release.
 
 ### Where files are installed
 
@@ -72,12 +72,12 @@ By default the CLI creates a **symlink** from each agent directory to a single c
 
 | Command | Description |
 |---------|-------------|
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate` | Install to all detected agents (current project) |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -g` | Install globally (all projects) |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -a <agent>` | Install to a specific agent |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate --all` | Install to all agents, skip prompts |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate -g -y` | Global + non-interactive (CI-friendly) |
-| `npx skills add https://github.com/carrilloapps/skills --skill devils-advocate --copy` | Copy files instead of symlink |
+| `npx skills add carrilloapps/skills@devils-advocate` | Install to all detected agents (current project) |
+| `npx skills add carrilloapps/skills@devils-advocate -g` | Install globally (all projects) |
+| `npx skills add carrilloapps/skills@devils-advocate -a <agent>` | Install to a specific agent |
+| `npx skills add carrilloapps/skills@devils-advocate --all` | Install to all agents, skip prompts |
+| `npx skills add carrilloapps/skills@devils-advocate -g -y` | Global + non-interactive (CI-friendly) |
+| `npx skills add carrilloapps/skills@devils-advocate --copy` | Copy files instead of symlink |
 | `npx skills list` | List all installed skills in current project |
 | `npx skills list -g` | List globally installed skills |
 | `npx skills find devils-advocate` | Search the skills.sh directory |

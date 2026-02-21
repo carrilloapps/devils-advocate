@@ -20,7 +20,7 @@ If you find a security issue in this skill — including harmful, misleading, or
 
 Report it privately by:
 
-1. **GitHub Security Advisories** (preferred): [Report a vulnerability](https://github.com/carrilloapps/devils-advocate/security/advisories/new)
+1. **GitHub Security Advisories** (preferred): [Report a vulnerability](https://github.com/carrilloapps/skills/security/advisories/new)
 2. **Email**: [m@carrillo.app](mailto:m@carrillo.app)
 
 ### What to include

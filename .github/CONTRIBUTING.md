@@ -176,7 +176,7 @@ bash skills/devils-advocate/scripts/validate.sh
 The skill is distributed directly from GitHub — no manual submission to skills.sh is required. Once the repository is public and contains a valid `SKILL.md`, anyone can install it with:
 
 ```bash
-npx skills add https://github.com/carrilloapps/skills --skill devils-advocate
+npx skills add carrilloapps/skills@devils-advocate
 ```
 
 The [skills.sh](https://skills.sh) leaderboard and `npx skills find` search index are **telemetry-driven**: skills appear automatically once they accumulate installs through the CLI. There is no registration form or publish command.
