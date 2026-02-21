@@ -47,7 +47,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: Full Infrastructure Migration AWS → GCP
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.8.7
+**Skill version**: 2.8.8
 **Scope**: Strategy — full infrastructure platform migration for a production system, 12-week timeline, 23 AWS services, team of 8 engineers
 
 ---

@@ -149,7 +149,7 @@ All contributions must pass these checks before merge:
 | Cross-references | Any file added to `frameworks/`, `checklists/`, or `examples/` must be added to the `SKILL.md` Index |
 | Domain coverage | New frameworks must not duplicate an existing domain |
 | en_US identifiers | All code in examples follows the Building Protocol |
-| No stale text | No references to `with implementation`, `14-dimension`, or other legacy phrasing |
+| No stale text | No references to `with implementation`, `14-dimension`, `carrilloapps/devils-advocate`, or other legacy phrasing |
 | SKILL.md token budget | File must stay under ~8,000 tokens (~32,000 chars) — Check 13 enforces this |
 
 The maintainers run an automated sweep script on every PR that checks all of the above. You can run it locally before submitting:

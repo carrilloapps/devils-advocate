@@ -11,6 +11,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.8] — 2026-02-21
+
+### Fixed
+- **Low — Quality Standards table incomplete stale patterns**: `CONTRIBUTING.md` "No stale text" row now explicitly lists `carrilloapps/devils-advocate` alongside `with implementation` and `14-dimension` — matching all 3 patterns enforced by `validate.sh` Check 6
+
+---
+
 ## [2.8.7] — 2026-02-21
 
 ### Fixed
