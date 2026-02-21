@@ -9,7 +9,7 @@
 - [ ] 📚 New framework (`frameworks/*.md`)
 - [ ] 🔧 Improvement to existing framework or checklist
 - [ ] 🏗️ Core protocol change (`SKILL.md`, `handbrake-protocol.md`, `immediate-report.md`, `output-format.md`)
-- [ ] 📦 Project infrastructure (README, CI, templates)
+- [ ] 📦 Project infrastructure (README, CI, templates, `AGENTS.md`, `copilot-instructions.md`)
 
 ## Changes Made
 
@@ -23,7 +23,9 @@
 
 ### All PRs
 - [ ] All ` ``` ` code fences are balanced (every opener has a closer)
-- [ ] No stale text: no `with implementation`, `14-dimension`, or other legacy phrasing
+- [ ] No stale text: no `with implementation`, `14-dimension`, `carrilloapps/devils-advocate`, or other legacy phrasing
+- [ ] All code identifiers in examples use `en_US` (Building Protocol)
+- [ ] `bash scripts/validate.sh` runs with 0 failures locally
 - [ ] Commit message follows Conventional Commits format
 
 ### If adding or modifying an example

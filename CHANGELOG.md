@@ -11,6 +11,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.5] — 2026-02-21
+
+### Fixed
+- **Medium — PR template out of sync with quality standards**: added `carrilloapps/devils-advocate` stale pattern, en_US identifiers check, and `validate.sh` checkbox to "All PRs" section
+- **Low — PR template Type of Change missing DA gate files**: `📦 Project infrastructure` type now explicitly includes `AGENTS.md` and `copilot-instructions.md`
+- **Low — CONTRIBUTING.md not flagging DA gate files as special**: "Improving Existing Files" now warns against weakening references to `SKILL.md` in `AGENTS.md` / `copilot-instructions.md`
+
+---
+
 ## [2.8.4] — 2026-02-21
 
 ### Fixed

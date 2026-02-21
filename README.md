@@ -14,7 +14,7 @@
 
 | Skill | Description | Version | Domains |
 |-------|-------------|---------|---------|
-| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.4-blue.svg)](CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
+| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.5-blue.svg)](CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
 
 ---
 

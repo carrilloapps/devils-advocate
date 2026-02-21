@@ -123,6 +123,7 @@ An example file in `examples/` must:
 - Keep changes minimal and surgical
 - Explain in the PR description what was wrong and why your version is better
 - Do not change the Gate prompt wording, version stamps in examples, or core protocol flow without opening an issue first
+- Do not weaken references to `SKILL.md` in `AGENTS.md` or `copilot-instructions.md` without opening an issue first — these files activate the DA gate for all contributors
 
 ### Bug Reports
 
