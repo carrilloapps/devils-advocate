@@ -14,7 +14,7 @@
 
 | Skill | Description | Version | Domains |
 |-------|-------------|---------|---------|
-| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.2-blue.svg)](skills/devils-advocate/CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
+| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.2-blue.svg)](CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
 
 ---
 
@@ -79,13 +79,13 @@ AI tools are increasingly capable of executing complex, multi-step operations �
 
 ```
 carrilloapps/skills/
+├── CHANGELOG.md        ← version history
 ├── scripts/
 │   └── validate.sh         ← CI quality gate (46 checks)
 └── skills/
     └── devils-advocate/    ← install: npx skills add carrilloapps/skills@devils-advocate
         ├── SKILL.md        ← always loaded by agents
         ├── README.md       ← full documentation
-        ├── CHANGELOG.md    ← version history
         ├── metadata.json   ← skill metadata
         ├── frameworks/     ← 18 domain & protocol frameworks
         ├── checklists/     ← 2 structured risk checklists

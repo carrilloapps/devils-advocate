@@ -19,7 +19,7 @@ section() { echo; echo "── $1 ───────────────�
 # ─── Check 1: Version consistency ────────────────────────────────────────────
 section "Version"
 VERSION=$(grep -m1 '^version:' "$ROOT/SKILL.md" | awk '{print $2}')
-CHANGELOG_VER=$(grep -m1 '^## \[[0-9]' "$ROOT/CHANGELOG.md" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
+CHANGELOG_VER=$(grep -m1 '^## \[[0-9]' "$REPO_ROOT/CHANGELOG.md" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
 if [ "$VERSION" = "$CHANGELOG_VER" ]; then
   ok "SKILL.md version ($VERSION) matches latest CHANGELOG entry"
 else
@@ -108,7 +108,7 @@ done < <(find "$ROOT" -name "*.md" -not -path "*/.git/*" -print0)
 
 # ─── Check 7: Required GitHub project files ──────────────────────────────────
 section "GitHub project files"
-for f in README.md CHANGELOG.md metadata.json; do
+for f in README.md metadata.json; do
   if [ -f "$ROOT/$f" ]; then
     ok "$f present"
   else
@@ -116,6 +116,7 @@ for f in README.md CHANGELOG.md metadata.json; do
   fi
 done
 for f in LICENSE .gitignore .gitattributes \
+          CHANGELOG.md \
           scripts/validate.sh \
           .github/CODEOWNERS \
           .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md \
