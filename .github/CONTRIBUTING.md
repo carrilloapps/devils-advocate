@@ -149,7 +149,7 @@ All contributions must pass these checks before merge:
 The maintainers run an automated sweep script on every PR that checks all of the above. You can run it locally before submitting:
 
 ```bash
-bash skills/devils-advocate/scripts/validate.sh
+bash scripts/validate.sh
 ```
 
 ---
@@ -191,7 +191,7 @@ When merging a batch of fixes, follow this checklist to cut a release:
 
 1. **Run the validator** — must be 0 failures before bumping:
    ```bash
-   bash skills/devils-advocate/scripts/validate.sh
+   bash scripts/validate.sh
    ```
 
 2. **Bump the version** — update `version:` in `SKILL.md` frontmatter (e.g. `X.Y.Z` → `X.Y.(Z+1)`)

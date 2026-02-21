@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # validate.sh — Devil's Advocate quality sweep
 # Checks all quality standards before a PR is merged.
-# Usage: bash scripts/validate.sh
+# Usage: bash scripts/validate.sh  (from repo root)
 # Compatible: macOS, Linux, Git Bash (Windows), WSL
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REPO_ROOT="$(cd "$ROOT/../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills/devils-advocate" && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ISSUES=()
 PASS=0
 FAIL=0
@@ -108,7 +108,7 @@ done < <(find "$ROOT" -name "*.md" -not -path "*/.git/*" -print0)
 
 # ─── Check 7: Required GitHub project files ──────────────────────────────────
 section "GitHub project files"
-for f in README.md CHANGELOG.md scripts/validate.sh; do
+for f in README.md CHANGELOG.md; do
   if [ -f "$ROOT/$f" ]; then
     ok "$f present"
   else
@@ -116,6 +116,7 @@ for f in README.md CHANGELOG.md scripts/validate.sh; do
   fi
 done
 for f in LICENSE .gitignore .gitattributes \
+          scripts/validate.sh \
           .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md \
           .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/feature_request.yml \
           .github/PULL_REQUEST_TEMPLATE.md .github/workflows/validate.yml; do

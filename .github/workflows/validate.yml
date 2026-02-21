@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
 
       - name: Make validate.sh executable
-        run: chmod +x skills/devils-advocate/scripts/validate.sh
+        run: chmod +x scripts/validate.sh
 
       - name: Run skill quality checks
-        run: bash skills/devils-advocate/scripts/validate.sh
+        run: bash scripts/validate.sh
