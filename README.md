@@ -14,7 +14,7 @@
 
 | Skill | Description | Version | Domains |
 |-------|-------------|---------|---------|
-| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.3-blue.svg)](CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
+| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.4-blue.svg)](CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
 
 ---
 
@@ -79,6 +79,7 @@ AI tools are increasingly capable of executing complex, multi-step operations �
 
 ```
 carrilloapps/skills/
+├── AGENTS.md           ← loads DA gate for AI agents
 ├── CHANGELOG.md        ← version history
 ├── scripts/
 │   └── validate.sh         ← CI quality gate (49 checks)

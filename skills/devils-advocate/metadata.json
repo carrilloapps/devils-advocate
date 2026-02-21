@@ -1,5 +1,5 @@
 {
-  "version": "2.8.3",
+  "version": "2.8.4",
   "author": "José Carrillo",
   "organization": "carrilloapps",
   "abstract": "Mandatory adversarial analysis gate for 40+ AI coding agents. Intercepts every plan, proposal, and action before execution, delivers a full risk analysis across 12 domains, and blocks all operations until the user explicitly authorizes them.",

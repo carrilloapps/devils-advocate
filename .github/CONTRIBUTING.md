@@ -148,6 +148,7 @@ All contributions must pass these checks before merge:
 | Domain coverage | New frameworks must not duplicate an existing domain |
 | en_US identifiers | All code in examples follows the Building Protocol |
 | No stale text | No references to `with implementation`, `14-dimension`, or other legacy phrasing |
+| SKILL.md token budget | File must stay under ~8,000 tokens (~32,000 chars) — Check 13 enforces this |
 
 The maintainers run an automated sweep script on every PR that checks all of the above. You can run it locally before submitting:
 
@@ -203,7 +204,7 @@ When merging a batch of fixes, follow this checklist to cut a release:
    - `skills/devils-advocate/SKILL.md` — `version:` in frontmatter *(already done in step 2)*
    - `skills/devils-advocate/README.md` — badge `version-X.Y.Z-blue`
    - `skills/devils-advocate/metadata.json` — `"version"` field
-   - `README.md` (root) — skill catalog badge `v X.Y.Z`
+   - `README.md` (root) — skill catalog badge `v X.Y.Z` **and** check count `(N checks)` if any checks were added/removed
    - All `skills/devils-advocate/examples/*.md` — `**Skill version**: X.Y.Z` line (run `validate.sh` to catch any missed)
 
 4. **Add a CHANGELOG entry** — edit `CHANGELOG.md` at the **repo root** (`/CHANGELOG.md`), under a new `## [X.Y.Z] — YYYY-MM-DD` section (above all prior versions, below `[Unreleased]`):

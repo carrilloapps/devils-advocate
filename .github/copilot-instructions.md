@@ -27,4 +27,4 @@ All checks must pass.
 - **Version cascade**: bump `version:` in `skills/devils-advocate/SKILL.md` frontmatter, then follow the cascade checklist in `.github/CONTRIBUTING.md`
 - **Documentation**: `en_US` recommended; code identifiers always `en_US`
 - **Commits**: Conventional Commits format (`feat:`, `fix:`, `docs:`)
-- **Branch**: `main` only — branch protection enforced
+- **Branch**: `main` only — enable branch protection in GitHub Settings → Branches (required status check: `validate`)

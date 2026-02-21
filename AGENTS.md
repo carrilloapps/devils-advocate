@@ -25,3 +25,9 @@ All checks must pass before pushing to `main`.
 ## Release conventions
 
 Version bumps require a full cascade — see `.github/CONTRIBUTING.md` → "Releasing a New Version" for the complete checklist.
+
+## Conventions
+
+- **Commits**: Conventional Commits format (`feat:`, `fix:`, `docs:`)
+- **Documentation**: `en_US` recommended; code identifiers always `en_US`
+- **Branch**: `main` only

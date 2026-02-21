@@ -49,7 +49,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: JWT Authentication Implementation
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.8.3
+**Skill version**: 2.8.4
 **Scope**: Security — JWT auth implementation for internal REST API
 
 ---

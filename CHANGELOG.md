@@ -11,6 +11,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.4] — 2026-02-21
+
+### Fixed
+- **Medium — False documentation claim**: `copilot-instructions.md` claimed "branch protection enforced" — replaced with actionable instruction to enable it in GitHub Settings
+- **Medium — Missing AGENTS.md in repo tree**: root `README.md` repository structure tree now shows `AGENTS.md` with its purpose
+- **Medium — Release checklist incomplete**: `CONTRIBUTING.md` step 3 now explicitly reminds maintainers to update the check count `(N checks)` in root `README.md` when checks are added/removed
+- **Low — Quality Standards table missing Check 13**: `CONTRIBUTING.md` quality table now includes `SKILL.md token budget` row documenting the 8K-token / 32K-char CI enforcement
+- **Low — AGENTS.md missing Conventions section**: added `## Conventions` (Conventional Commits, en_US, branch) to match `copilot-instructions.md` — all AI agents now receive the same contributor conventions regardless of which context file they load
+
+---
+
 ## [2.8.3] — 2026-02-21
 
 ### Fixed
