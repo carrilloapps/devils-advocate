@@ -47,4 +47,4 @@ The Gate still applies after a bypass. The bypass skips specialist context only 
 
 ---
 
-*Part of the [Devil's Advocate](https://github.com/carrilloapps/devils-advocate) skill · MIT · [carrillo.app](https://carrillo.app)*
+*Part of the [Devil's Advocate](https://github.com/carrilloapps/skills) skill · MIT · [carrillo.app](https://carrillo.app)*

@@ -14,7 +14,7 @@
 
 | Skill | Description | Version | Domains |
 |-------|-------------|---------|---------|
-| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.0-blue.svg)](skills/devils-advocate/CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
+| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![Version](https://img.shields.io/badge/v2.8.1-blue.svg)](skills/devils-advocate/CHANGELOG.md) | Architecture · Security · Performance · Data · Product · UX · Strategy · 12 total |
 
 ---
 
@@ -78,17 +78,18 @@ AI tools are increasingly capable of executing complex, multi-step operations �
 ## Repository Structure
 
 ```
-skills/
-└── devils-advocate/        ← install: npx skills add carrilloapps/skills@devils-advocate
-    ├── SKILL.md            ← always loaded by agents
-    ├── README.md           ← full documentation
-    ├── CHANGELOG.md        ← version history
-    ├── metadata.json       ← skill metadata
-    ├── frameworks/         ← 18 domain & protocol frameworks
-    ├── checklists/         ← 2 structured risk checklists
-    ├── examples/           ← 12 real-world analysis examples
-    └── scripts/
-        └── validate.sh     ← CI quality gate (43 checks)
+carrilloapps/skills/
+├── scripts/
+│   └── validate.sh         ← CI quality gate (43 checks)
+└── skills/
+    └── devils-advocate/    ← install: npx skills add carrilloapps/skills@devils-advocate
+        ├── SKILL.md        ← always loaded by agents
+        ├── README.md       ← full documentation
+        ├── CHANGELOG.md    ← version history
+        ├── metadata.json   ← skill metadata
+        ├── frameworks/     ← 18 domain & protocol frameworks
+        ├── checklists/     ← 2 structured risk checklists
+        └── examples/       ← 12 real-world analysis examples
 ```
 
 Each skill is self-contained and independently installable via `@<skill-name>`.

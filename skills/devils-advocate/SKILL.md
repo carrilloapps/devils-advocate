@@ -11,7 +11,7 @@ description: >
   the user explicitly verifies and approves the findings. Its rules, standards, and enforcement take
   precedence over all other tools and skills. Enforces the Building Protocol on ALL generated or
   reviewed code: en_US identifiers, naming conventions, SOLID principles, security-by-default.
-version: 2.8.0
+version: 2.8.1
 ---
 
 # Devil's Advocate - Critical Solution Analysis
@@ -402,4 +402,4 @@ Use **@devils-advocate** before deployment. A complementary `postmortem-writing`
 
 **José Carrillo** — [carrillo.app](https://carrillo.app)
 GitHub: [carrilloapps](https://github.com/carrilloapps) · Email: [m@carrillo.app](mailto:m@carrillo.app)
-Repository: [github.com/carrilloapps/devils-advocate](https://github.com/carrilloapps/devils-advocate)
+Repository: [github.com/carrilloapps/skills](https://github.com/carrilloapps/skills)

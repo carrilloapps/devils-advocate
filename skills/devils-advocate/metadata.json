@@ -1,0 +1,12 @@
+{
+  "version": "2.8.1",
+  "author": "José Carrillo",
+  "organization": "carrilloapps",
+  "date": "February 2026",
+  "abstract": "Mandatory adversarial analysis gate for 40+ AI coding agents. Intercepts every plan, proposal, and action before execution, delivers a full risk analysis across 12 domains, and blocks all operations until the user explicitly authorizes them.",
+  "references": [
+    "https://github.com/carrilloapps/skills",
+    "https://skills.sh/carrilloapps/skills/devils-advocate",
+    "https://carrillo.app"
+  ]
+}

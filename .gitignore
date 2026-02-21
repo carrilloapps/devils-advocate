@@ -110,8 +110,11 @@ yarn-error.log*
 # Mux
 .mux/
 
-# OpenClaw (uses root `skills/` directory as its install path — not for sub-skill organization)
-skills/
+# OpenClaw (uses root `skills/` directory as its install path)
+# NOTE: `skills/` is the monorepo source directory — it must NOT be ignored here.
+# If you use OpenClaw locally and it installs into `skills/`, add `skills/` to your
+# personal global gitignore (~/.gitignore_global) instead of this file.
+# New skills added to skills/<name>/ are tracked source — commit them normally.
 
 # OpenHands
 .openhands/

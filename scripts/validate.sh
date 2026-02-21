@@ -98,7 +98,7 @@ while IFS= read -r -d '' file; do
   skip=false
   for ex in $STALE_EXCLUDE; do [[ "$name" == "$ex" ]] && skip=true; done
   if ! $skip; then
-    if grep -qE "with implementation|14-dimension" "$file"; then
+    if grep -qE "with implementation|14-dimension|carrilloapps/devils-advocate" "$file"; then
       fail "Stale text in: ${file#$ROOT/}"
       ((++STALE_ISSUES))
     fi
@@ -108,7 +108,7 @@ done < <(find "$ROOT" -name "*.md" -not -path "*/.git/*" -print0)
 
 # ─── Check 7: Required GitHub project files ──────────────────────────────────
 section "GitHub project files"
-for f in README.md CHANGELOG.md; do
+for f in README.md CHANGELOG.md metadata.json; do
   if [ -f "$ROOT/$f" ]; then
     ok "$f present"
   else
@@ -117,6 +117,7 @@ for f in README.md CHANGELOG.md; do
 done
 for f in LICENSE .gitignore .gitattributes \
           scripts/validate.sh \
+          .github/CODEOWNERS \
           .github/CONTRIBUTING.md .github/CODE_OF_CONDUCT.md .github/SECURITY.md \
           .github/ISSUE_TEMPLATE/bug_report.yml .github/ISSUE_TEMPLATE/feature_request.yml \
           .github/PULL_REQUEST_TEMPLATE.md .github/workflows/validate.yml; do
@@ -178,6 +179,16 @@ if [ "$README_VER" = "$SKILL_VER2" ]; then
   ok "README.md version badge ($README_VER) matches SKILL.md version"
 else
   fail "README.md version badge ($README_VER) does not match SKILL.md ($SKILL_VER2)"
+fi
+
+# ─── Check 12: metadata.json version matches SKILL.md ────────────────────────
+section "metadata.json version"
+META_VER=$(grep -oE '"version"[[:space:]]*:[[:space:]]*"[0-9]+\.[0-9]+\.[0-9]+"' "$ROOT/metadata.json" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+SKILL_VER3=$(grep -m1 '^version:' "$ROOT/SKILL.md" | sed 's/version: *//')
+if [ "$META_VER" = "$SKILL_VER3" ]; then
+  ok "metadata.json version ($META_VER) matches SKILL.md version"
+else
+  fail "metadata.json version ($META_VER) does not match SKILL.md ($SKILL_VER3)"
 fi
 
 # ─── Summary ──────────────────────────────────────────────────────────────────

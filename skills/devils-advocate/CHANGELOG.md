@@ -11,6 +11,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.1] — 2026-02-21
+
+### Fixed
+- `.gitignore` `skills/` pattern removed — was silently ignoring all future skills in the monorepo; added inline explanation for OpenClaw users
+- `SKILL.md` author footer URL updated from `carrilloapps/devils-advocate` to `carrilloapps/skills`
+- `frameworks/handbrake-checklist.md` footer URL updated to `carrilloapps/skills`
+- Root `README.md` repository structure tree corrected — `scripts/` shown at repo root (not inside `skills/devils-advocate/`)
+- `.github/CODEOWNERS` created — requires `@carrilloapps` review for core protocol files
+
+### Added
+- `validate.sh` Check 12: `metadata.json` version compared against `SKILL.md` version
+- `validate.sh` Check 6: added `carrilloapps/devils-advocate` as stale text pattern
+- `validate.sh` Check 7: `metadata.json` and `.github/CODEOWNERS` added to required files list
+
+---
+
 ## [2.8.0] — 2026-02-20
 
 ### Changed

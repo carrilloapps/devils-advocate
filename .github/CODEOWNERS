@@ -1,0 +1,11 @@
+# CODEOWNERS — carrilloapps/skills
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @carrilloapps
+
+# Core protocol files — require maintainer review on every change
+skills/devils-advocate/SKILL.md @carrilloapps
+skills/devils-advocate/frameworks/ @carrilloapps
+skills/devils-advocate/checklists/ @carrilloapps
+scripts/validate.sh @carrilloapps
