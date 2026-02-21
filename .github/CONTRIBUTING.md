@@ -197,8 +197,11 @@ When merging a batch of fixes, follow this checklist to cut a release:
 2. **Bump the version** — update `version:` in `SKILL.md` frontmatter (e.g. `X.Y.Z` → `X.Y.(Z+1)`)
 
 3. **Cascade the version** to all versioned files:
-   - `README.md` — badge `version-X.Y.Z-blue`
-   - All `examples/*.md` — `**Skill version**: X.Y.Z` line (run `validate.sh` to catch any missed)
+   - `skills/devils-advocate/SKILL.md` — `version:` in frontmatter *(already done in step 2)*
+   - `skills/devils-advocate/README.md` — badge `version-X.Y.Z-blue`
+   - `skills/devils-advocate/metadata.json` — `"version"` field
+   - `README.md` (root) — skill catalog badge `v X.Y.Z`
+   - All `skills/devils-advocate/examples/*.md` — `**Skill version**: X.Y.Z` line (run `validate.sh` to catch any missed)
 
 4. **Add a CHANGELOG entry** — under a new `## [X.Y.Z] — YYYY-MM-DD` section (above all prior versions, below `[Unreleased]`):
    ```markdown
@@ -210,11 +213,12 @@ When merging a batch of fixes, follow this checklist to cut a release:
 
 5. **Run the validator again** — confirm 0 failures with the new version
 
-6. **Commit and push**:
+6. **Commit, tag, and push**:
    ```bash
    git add -A
-   git commit -m "feat: release version X.Y.Z — <summary>"
-   git push
+   git commit -m "fix: vX.Y.Z — <summary>"
+   git tag vX.Y.Z
+   git push origin main --tags
    ```
 
 The skills.sh install counter updates automatically as users run `npx skills update` or install fresh.

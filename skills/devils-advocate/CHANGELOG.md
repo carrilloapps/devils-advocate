@@ -11,6 +11,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.2] — 2026-02-21
+
+### Fixed
+- Root `README.md` check count corrected: `43 checks` → `46 checks`
+- `metadata.json` `date` field removed — was hardcoded and stale; not required by skills.sh
+- `CONTRIBUTING.md` release checklist step 3 updated: added `metadata.json`, root `README.md` badge, and correct file paths to cascade list
+- `CONTRIBUTING.md` release checklist step 6 updated: added `git tag vX.Y.Z` and `--tags` to push command
+
+---
+
 ## [2.8.1] — 2026-02-21
 
 ### Fixed
