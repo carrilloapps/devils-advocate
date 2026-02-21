@@ -11,6 +11,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## [2.8.3] — 2026-02-21
+
+### Fixed
+- **High — CI scope gap**: `validate.sh` Checks 2 (fence balance) and 6 (stale text) now scan `$REPO_ROOT` instead of `$ROOT` — root `README.md`, `CHANGELOG.md`, and all `.github/` files are now included in every CI run
+- **High — Missing agent context**: Added `AGENTS.md` (repo root) and `.github/copilot-instructions.md` — contributors using GitHub Copilot, Claude Code, Cursor, Windsurf, and compatible agents now auto-load the Devil's Advocate skill when working on this repository
+- **Medium — Stale token count**: `CONTRIBUTING.md` token estimate updated from ~7,068 to ~7,215 tokens (28,859 bytes)
+- **Medium — Discovery gap**: `metadata.json` now includes `keywords` field for `npx skills find` search indexing
+- **Low — Domain count update path**: `CONTRIBUTING.md` new framework checklist now lists all three locations where the domain count must be updated
+
+### Added
+- `validate.sh` **Check 13**: SKILL.md token budget enforcement — fails if file exceeds 32,000 chars (~8,000 tokens)
+- `validate.sh` **Check 7**: `AGENTS.md` and `.github/copilot-instructions.md` added to required files list
+- Total checks: 46 → **49**
+
+---
+
 ## [2.8.2] — 2026-02-21
 
 ### Fixed

@@ -32,10 +32,10 @@ FENCE_ISSUES=0
 while IFS= read -r -d '' file; do
   count=$(grep -c '^```' "$file" 2>/dev/null || true)
   if (( count % 2 != 0 )); then
-    fail "Odd fence count ($count) in: ${file#$ROOT/}"
+    fail "Odd fence count ($count) in: ${file#$REPO_ROOT/}"
     ((++FENCE_ISSUES))
   fi
-done < <(find "$ROOT" -name "*.md" -not -path "*/.git/*" -print0)
+done < <(find "$REPO_ROOT" -name "*.md" -not -path "*/.git/*" -print0)
 (( FENCE_ISSUES == 0 )) && ok "All .md files have balanced fences"
 
 # ─── Check 3: Gate blocks in all examples ────────────────────────────────────
@@ -99,11 +99,11 @@ while IFS= read -r -d '' file; do
   for ex in $STALE_EXCLUDE; do [[ "$name" == "$ex" ]] && skip=true; done
   if ! $skip; then
     if grep -qE "with implementation|14-dimension|carrilloapps/devils-advocate" "$file"; then
-      fail "Stale text in: ${file#$ROOT/}"
+      fail "Stale text in: ${file#$REPO_ROOT/}"
       ((++STALE_ISSUES))
     fi
   fi
-done < <(find "$ROOT" -name "*.md" -not -path "*/.git/*" -print0)
+done < <(find "$REPO_ROOT" -name "*.md" -not -path "*/.git/*" -print0)
 (( STALE_ISSUES == 0 )) && ok "No stale text found"
 
 # ─── Check 7: Required GitHub project files ──────────────────────────────────
@@ -115,7 +115,9 @@ for f in README.md metadata.json; do
     fail "Missing: $f"
   fi
 done
-for f in LICENSE .gitignore .gitattributes \
+for f in AGENTS.md \
+          .github/copilot-instructions.md \
+          LICENSE .gitignore .gitattributes \
           CHANGELOG.md \
           scripts/validate.sh \
           .github/CODEOWNERS \
@@ -190,6 +192,17 @@ if [ "$META_VER" = "$SKILL_VER3" ]; then
   ok "metadata.json version ($META_VER) matches SKILL.md version"
 else
   fail "metadata.json version ($META_VER) does not match SKILL.md ($SKILL_VER3)"
+fi
+
+# ─── Check 13: SKILL.md token budget ─────────────────────────────────────────
+section "SKILL.md token budget"
+SKILL_BYTES=$(wc -c < "$ROOT/SKILL.md")
+SKILL_TOKEN_EST=$(( SKILL_BYTES / 4 ))
+# 8,000-token budget ≈ 32,000 chars (conservative 4 chars/token estimate)
+if (( SKILL_BYTES < 32000 )); then
+  ok "SKILL.md ${SKILL_BYTES} chars (~${SKILL_TOKEN_EST} tokens) — within 8K-token budget"
+else
+  fail "SKILL.md ${SKILL_BYTES} chars (~${SKILL_TOKEN_EST} tokens) — exceeds 8K-token budget (32,000 char threshold)"
 fi
 
 # ─── Summary ──────────────────────────────────────────────────────────────────
