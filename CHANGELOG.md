@@ -1,13 +1,48 @@
 # Changelog
 
-All notable changes to Devil's Advocate are documented in this file.
+All notable changes to this repository are documented in this file.
+Each skill is versioned independently — Devil's Advocate uses `[X.Y.Z]` headers, additional skills use `skill-name [X.Y.Z]` headers.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and all skills adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Planned
 - `postmortem-writing` companion skill for post-incident analysis
+
+---
+
+## sar-cybersecurity [1.0.0] — 2026-03-09
+
+### Added
+- **Initial release**: Automated Security Assessment Report (SAR) generator for AI coding agents — deep cybersecurity analysis mapped to 20+ compliance standards (ISO 27001, NIST, OWASP, PCI-DSS, GDPR, MITRE ATT&CK)
+- `skills/sar-cybersecurity/SKILL.md` — core skill definition (~170 lines) with 7 operating constraints, progressive context loading via Index section with context budget rules, 5-step analysis protocol, bounded expert scope, and full skills.sh security audit compliance
+- `skills/sar-cybersecurity/metadata.json` — skill metadata for skills.sh registry
+- `skills/sar-cybersecurity/README.md` — comprehensive documentation with install commands, compatible agents table, workflow diagrams, edge cases, and full feature reference
+- **Protocol files** (free to load):
+  - `frameworks/output-format.md` — SAR output specification (directory, file naming, document structure)
+  - `frameworks/scoring-system.md` — criticality scoring system (0–100) with decision flow
+- **Domain frameworks** (max 2 per assessment):
+  - `frameworks/compliance-standards.md` — 20 baseline compliance standards with expanded descriptions and selection guide
+  - `frameworks/database-access-protocol.md` — SQL, NoSQL, Redis inspection protocol with bounded queries and index verification
+  - `frameworks/injection-patterns.md` — 6 injection families: SQL, NoSQL Operator, Regex/ReDoS, Mass Assignment, GraphQL, ORM/ODM
+  - `frameworks/storage-exfiltration.md` — 7 data leakage categories: cloud storage, secrets, file uploads, logging, message queues, CDN, IaC
+- **Examples** (8 canonical edge cases):
+  - `examples/unreachable-vulnerability.md` — dead code with SQL injection (score 35)
+  - `examples/runtime-validation.md` — inline validation without formal structure (score 38)
+  - `examples/full-flow-evaluation.md` — infrastructure-layer auth masking insecure code (score 30)
+  - `examples/nosql-operator-injection.md` — MongoDB `$ne` injection, 15 endpoints (score 92)
+  - `examples/regex-redos-injection.md` — ReDoS + data exfiltration, 23 occurrences (score 82)
+  - `examples/mass-assignment.md` — IDOR + privilege escalation via unfiltered body (score 88)
+  - `examples/public-cloud-bucket.md` — public S3 with PII, backups, and secrets (score 97)
+  - `examples/secrets-in-source-control.md` — 12 secrets across 6 files, 14 months (score 93)
+- All domain frameworks with code include `⚠️ Reference patterns only` boundary notes; all examples include `⚠️ Example only` boundary notes — required for skills.sh security audit compliance (Gen Agent Trust Hub, Socket, Snyk)
+
+### Changed (repository-level)
+- `.ai-context.md` created — AI agent safety context with skills.sh scanner documentation, mandatory safeguards checklist, current audit results table, and new skill onboarding guide
+- `AGENTS.md` — added skills.sh Security Audit Compliance section with scanner table, 6 required safeguards, and devils-advocate gold standard reference; skills table expanded to include SAR Cybersecurity
+- `.github/copilot-instructions.md` — added SAR Cybersecurity skill reference and skills.sh security audit compliance cross-reference
+- Root `README.md` rewritten for professional monorepo presentation: correct badges, comprehensive skills table, detailed skill descriptions for both Devil's Advocate and SAR Cybersecurity, "How Skills Work Together" Mermaid diagram, compatible agents table, repository structure tree, quality gate, and contributing/security/license sections
 
 ---
 
