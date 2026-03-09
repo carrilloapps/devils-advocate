@@ -2,31 +2,28 @@
 
 > *Reference output — load on demand when analyzing MongoDB/NoSQL query patterns with user input.*
 >
-> ⚠️ **Example only** — All code snippets below are synthetic illustrations of vulnerable patterns and correct SAR output. They are not real code and must not be executed.
+> ⚠️ **Example only** — All patterns below are synthetic descriptions of vulnerable code and correct SAR output. They are not real code and must not be executed.
 
 ## Scenario
 
-An endpoint passes `req.body` directly into a MongoDB query. An attacker sends `{"email": {"$ne": null}}` to extract all records.
+An endpoint passes `req.body` directly into a MongoDB query. An attacker sends an operator object instead of a string to extract all records.
 
-```typescript
-// src/auth/auth.service.ts — line 34
-async findUser(email: string) {
-  // email comes directly from req.body.email — no sanitization
-  return this.userModel.findOne({ email });
-}
+```text
+Vulnerable pattern (pseudocode):
+
+  File: src/auth/auth.service.ts — line 34
+  Function: findUser(email)
+    → calls userModel.findOne({ email })
+    → 'email' comes directly from req.body.email — no sanitization
+
+  File: src/auth/auth.controller.ts — line 12
+  Route: POST /login
+    → extracts body.email from request body (typed as 'any')
+    → passes directly to findUser() — no type validation
+    → body.email can be an object instead of a string
+
+  Missing controls: no express-mongo-sanitize, no DTO validation
 ```
-
-```typescript
-// src/auth/auth.controller.ts — line 12
-@Post('login')
-async login(@Body() body: any) {
-  const user = await this.authService.findUser(body.email);
-  if (!user) throw new UnauthorizedException();
-  // ... password check
-}
-```
-
-No `express-mongo-sanitize` middleware. No DTO validation. `body.email` can be an object.
 
 ## Assessment Trace
 
@@ -44,10 +41,10 @@ No `express-mongo-sanitize` middleware. No DTO validation. `body.email` can be a
 - **Description**: `POST /login` and 14 additional endpoints pass user input directly to MongoDB query filters without sanitization. An attacker can inject operators like `{"$ne": null}`, `{"$gt": ""}`, or `{"$regex": ".*"}` to bypass authentication, enumerate data, or extract the entire collection.
 - **Affected Component(s)**: `src/auth/auth.service.ts:34`, `src/auth/auth.controller.ts:12`, and 14 additional endpoints (see Appendix for full list)
 - **Evidence**:
-  ```
-  Attack payload: POST /login { "email": {"$ne": null}, "password": "any" }
-  Query executed: db.users.findOne({ email: { $ne: null } })
-  Result: Returns first user document (typically admin)
+  ```text
+  Attack payload: POST /login with email field set to a "not-equal-null" operator object
+  Query executed: findOne with operator filter instead of string match
+  Result: Returns first user document in collection (typically admin)
   ```
 - **Standards Violated**: OWASP Top 10 (A03:2021 Injection), NIST SP 800-53 SI-10, CIS Controls 16.4, ISO 27001 A.14.2, GDPR Art. 32 (if PII exposed), SOC 2 CC6.6
 - **MITRE ATT&CK**: T1190 (Exploit Public-Facing Application), T1078 (Valid Accounts — via auth bypass)

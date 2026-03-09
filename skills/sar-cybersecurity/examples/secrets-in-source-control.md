@@ -2,32 +2,37 @@
 
 > *Reference output — load on demand when assessing repositories for leaked credentials, API keys, or hardcoded secrets.*
 >
-> ⚠️ **Example only** — All code snippets, shell commands, and credential patterns below are synthetic illustrations of vulnerable configurations and correct SAR output. They are not real secrets and must not be executed or used.
+> ⚠️ **Example only** — All patterns, shell output, and credential placeholders below are synthetic descriptions of vulnerable configurations and correct SAR output. They are not real secrets and must not be executed or used.
 
 ## Scenario
 
 The git repository contains `.env` files, hardcoded API keys, and database connection strings with credentials.
 
-```bash
-# git ls-files shows committed .env
-$ git ls-files '*.env*'
-.env
-.env.production
-docker/.env.local
+```text
+Discovery (pseudocode):
+
+  git ls-files '*.env*' reveals 3 committed environment files:
+    .env
+    .env.production
+    docker/.env.local
 ```
 
-```ini
-# .env.production (committed to repo)
-DATABASE_URL=mongodb://admin:S3cretP@ss!@prod-db.cluster.mongodb.net:27017/myapp
-JWT_SECRET=my-super-secret-jwt-key-2024
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-STRIPE_SECRET_KEY=sk_live_51H7...
+```text
+Sensitive content found in .env.production (committed to repo):
+
+  DATABASE_URL      = mongodb://<USER>:<PASSWORD>@<HOST>:27017/<DB>
+  JWT_SECRET        = <PLAINTEXT_JWT_SIGNING_KEY>
+  AWS_ACCESS_KEY_ID = <AWS_ACCESS_KEY_PLACEHOLDER>
+  AWS_SECRET_KEY    = <AWS_SECRET_KEY_PLACEHOLDER>
+  STRIPE_SECRET_KEY = <STRIPE_KEY_PLACEHOLDER>
 ```
 
-```typescript
-// src/config/database.ts — line 8
-const MONGO_URI = 'mongodb://admin:S3cretP@ss!@prod-db.cluster.mongodb.net:27017/myapp';
+```text
+Hardcoded credential in source code:
+
+  File: src/config/database.ts — line 8
+  Variable: MONGO_URI
+    → contains full connection string with plaintext username and password
 ```
 
 ## Assessment Trace
@@ -38,10 +43,10 @@ const MONGO_URI = 'mongodb://admin:S3cretP@ss!@prod-db.cluster.mongodb.net:27017
    - `src/config/database.ts`: hardcoded MongoDB connection string
    - `Dockerfile`: `ENV JWT_SECRET=...` in build args
    - `docker-compose.yml`: plaintext credentials in environment section
-3. **Git history check**: `git log --all --diff-filter=A -- '*.env*'` shows `.env` committed 14 months ago, `.env.production` committed 8 months ago.
+3. **Git history check**: `git log` shows `.env` committed 14 months ago, `.env.production` committed 8 months ago.
 4. **`.gitignore` check**: No `.env*` pattern found in `.gitignore`.
 5. **Secrets manager**: No references to AWS Secrets Manager, Vault, or any secrets management service across the codebase.
-6. **CI/CD check**: GitHub Actions workflow uses `${{ secrets.AWS_KEY }}` in one step but `echo $DATABASE_URL` in debug step (log exposure).
+6. **CI/CD check**: GitHub Actions workflow uses masked secrets in one step but echoes a database URL variable in a debug step (log exposure).
 
 ## SAR Finding
 
@@ -50,12 +55,12 @@ const MONGO_URI = 'mongodb://admin:S3cretP@ss!@prod-db.cluster.mongodb.net:27017
 - **Description**: 12 production secrets (database credentials, JWT signing key, AWS access keys, Stripe API key) are committed to the repository across 6 files. Secrets have been in git history for up to 14 months. No secrets management service is used. CI/CD pipeline echoes one secret to build logs.
 - **Affected Component(s)**: `.env`, `.env.production`, `docker/.env.local`, `src/config/database.ts:8`, `Dockerfile`, `docker-compose.yml`, `.github/workflows/deploy.yml`
 - **Evidence**:
-  ```
+  ```text
   Committed files: git ls-files '*.env*' → 3 files tracked
-  History: git log --all --diff-filter=A -- '.env' → first commit: 14 months ago
-  Hardcoded: MONGO_URI in src/config/database.ts line 8
-  Docker: ENV JWT_SECRET=... visible in image layers
-  CI/CD: echo $DATABASE_URL in deploy.yml debug step
+  History: first .env commit was 14 months ago
+  Hardcoded: connection string with credentials in src/config/database.ts line 8
+  Docker: JWT signing key visible in image layers via ENV directive
+  CI/CD: database URL echoed to build logs in debug step
   ```
 - **Standards Violated**: OWASP Top 10 (A02:2021 Cryptographic Failures, A05:2021 Security Misconfiguration), ISO 27001 A.9.2, A.10.1 (access management, cryptography), NIST SP 800-53 IA-5 (Authenticator Management), CIS Controls 16.1, PCI-DSS Req. 3.4, 8.2 (if payment data), SOC 2 CC6.1, GDPR Art. 32 (if DB contains EU PII)
 - **MITRE ATT&CK**: T1552.001 (Credentials in Files), T1552.004 (Private Keys), T1528 (Steal Application Access Token)
@@ -70,12 +75,9 @@ const MONGO_URI = 'mongodb://admin:S3cretP@ss!@prod-db.cluster.mongodb.net:27017
      - Remove secrets from `Dockerfile` — use runtime injection
      - Fix CI/CD pipeline — remove `echo $DATABASE_URL`, use GitHub Actions masked secrets
   3. **Short-term**:
-     - Purge git history using `git filter-repo` or BFG Repo-Cleaner:
-       ```bash
-       git filter-repo --invert-paths --path .env --path .env.production --path docker/.env.local
-       ```
+     - Purge git history using `git filter-repo` or BFG Repo-Cleaner to remove all .env files from history
      - Force-push cleaned history (coordinate with team — destructive operation)
-     - Replace `src/config/database.ts` hardcoded string with `process.env.DATABASE_URL`
+     - Replace hardcoded connection string in source code with environment variable reference
   4. **Medium-term**:
      - Adopt AWS Secrets Manager (or HashiCorp Vault) for all production secrets
      - Add pre-commit hooks: `gitleaks` or `detect-secrets` to prevent future leaks

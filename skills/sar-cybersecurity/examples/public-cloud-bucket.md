@@ -2,33 +2,31 @@
 
 > *Reference output — load on demand when assessing cloud storage configurations (S3, GCS, Azure Blob).*
 >
-> ⚠️ **Example only** — All code snippets, IaC templates, and CLI commands below are synthetic illustrations of vulnerable configurations and correct SAR output. They are not real infrastructure and must not be executed or deployed.
+> ⚠️ **Example only** — All patterns, IaC descriptions, and configuration references below are synthetic illustrations of vulnerable configurations and correct SAR output. They are not real infrastructure and must not be executed or deployed.
 
 ## Scenario
 
 An S3 bucket is configured with public read access and contains user uploads, database backups, and application logs.
 
-```json
-// terraform/s3.tf (simplified)
-resource "aws_s3_bucket" "uploads" {
-  bucket = "myapp-user-uploads-prod"
-  acl    = "public-read"
-}
+```text
+Vulnerable IaC pattern (pseudocode):
 
-// No block_public_access, no encryption, no versioning, no logging
+  File: terraform/s3.tf
+  Resource: aws_s3_bucket "uploads"
+    → bucket name: <APP>-user-uploads-prod
+    → ACL set to public-read
+    → no block_public_access resource defined
+    → no encryption, no versioning, no access logging
 ```
 
-```json
-// Bucket policy (discovered via AWS CLI)
-{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Principal": "*",
-    "Action": "s3:GetObject",
-    "Resource": "arn:aws:s3:::myapp-user-uploads-prod/*"
-  }]
-}
+```text
+Bucket policy (discovered during assessment):
+
+  Statement:
+    → Effect: Allow
+    → Principal: * (any unauthenticated user)
+    → Action: s3:GetObject
+    → Resource: all objects in the bucket
 ```
 
 ## Assessment Trace
@@ -41,19 +39,18 @@ resource "aws_s3_bucket" "uploads" {
    - `logs/` — application logs (contain JWT tokens, API keys in error traces)
 4. **Encryption**: No `ServerSideEncryptionConfiguration` — data stored unencrypted.
 5. **Access logging**: No S3 Server Access Logging — no audit trail of who accessed what.
-6. **Frontend exposure**: Bucket name `myapp-user-uploads-prod` hardcoded in `src/config/storage.ts` and visible in client-side JavaScript.
+6. **Frontend exposure**: Bucket name hardcoded in `src/config/storage.ts` and visible in client-side JavaScript.
 
 ## SAR Finding
 
 ### [97] — Public S3 Bucket Containing PII, Database Backups, and Application Secrets
 
-- **Description**: Production S3 bucket `myapp-user-uploads-prod` is publicly readable via ACL and bucket policy (`"Principal": "*"`). The bucket contains user-uploaded personal documents, database backups with customer PII, and application logs with JWT tokens and API keys. No encryption at rest, no access logging.
+- **Description**: Production S3 bucket is publicly readable via ACL and bucket policy (Principal set to wildcard). The bucket contains user-uploaded personal documents, database backups with customer PII, and application logs with authentication tokens and API keys. No encryption at rest, no access logging.
 - **Affected Component(s)**: `terraform/s3.tf`, bucket policy, `src/config/storage.ts`
 - **Evidence**:
-  ```
-  Public URL: https://myapp-user-uploads-prod.s3.amazonaws.com/backups/2024-01-15_dump.sql.gz
-  Status: 200 OK (no auth required)
-  Policy: "Principal": "*", "Action": "s3:GetObject"
+  ```text
+  Public URL: bucket backups prefix accessible without authentication (HTTP 200)
+  Policy: Principal set to wildcard, Action s3:GetObject on all objects
   ACL: public-read
   Encryption: None
   Logging: None

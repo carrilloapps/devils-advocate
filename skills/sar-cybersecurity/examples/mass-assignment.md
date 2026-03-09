@@ -2,29 +2,28 @@
 
 > *Reference output — load on demand when analyzing endpoints that pass request bodies directly to ORM/ODM update methods.*
 >
-> ⚠️ **Example only** — All code snippets below are synthetic illustrations of vulnerable patterns and correct SAR output. They are not real code and must not be executed.
+> ⚠️ **Example only** — All patterns below are synthetic descriptions of vulnerable code and correct SAR output. They are not real code and must not be executed.
 
 ## Scenario
 
-An endpoint calls `Model.findByIdAndUpdate(id, req.body)` without filtering which fields the client can modify.
+An endpoint calls a database update method with the full request body without filtering which fields the client can modify.
 
-```typescript
-// src/users/users.controller.ts — line 45
-@Patch(':id')
-@UseGuards(JwtAuthGuard)
-async updateUser(@Param('id') id: string, @Body() body: any) {
-  return this.usersService.update(id, body);
-}
+```text
+Vulnerable pattern (pseudocode):
+
+  File: src/users/users.controller.ts — line 45
+  Route: PATCH /users/:id
+  Guards: JwtAuthGuard (authenticated, but no role check)
+    → extracts 'id' from URL params and 'body' from request
+    → passes both directly to usersService.update(id, body)
+
+  File: src/users/users.service.ts — line 30
+  Function: update(id, data)
+    → calls userModel.findByIdAndUpdate(id, data, { new: true })
+    → no field filtering — all body fields are written to the document
+
+  Mongoose schema sensitive fields: role, isAdmin, balance, verified, email, name, phone
 ```
-
-```typescript
-// src/users/users.service.ts — line 30
-async update(id: string, data: any) {
-  return this.userModel.findByIdAndUpdate(id, data, { new: true });
-}
-```
-
-Mongoose schema includes: `role`, `isAdmin`, `balance`, `verified`, `email`, `name`, `phone`.
 
 ## Assessment Trace
 
@@ -42,9 +41,9 @@ Mongoose schema includes: `role`, `isAdmin`, `balance`, `verified`, `email`, `na
 - **Description**: `PATCH /users/:id` passes the full request body to `findByIdAndUpdate` without field filtering. Any authenticated user can modify any field (including `role`, `isAdmin`, `balance`) on any user account (IDOR — no ownership check).
 - **Affected Component(s)**: `src/users/users.controller.ts:45`, `src/users/users.service.ts:30`
 - **Evidence**:
-  ```
-  Attack payload: PATCH /users/OTHER_USER_ID
-  Body: { "role": "admin", "isAdmin": true, "balance": 999999 }
+  ```text
+  Attack payload: PATCH /users/<OTHER_USER_ID>
+  Body: fields set to role=admin, isAdmin=true, balance=999999
   Result: Target user escalated to admin with modified balance
   ```
 - **Standards Violated**: OWASP Top 10 (A01:2021 Broken Access Control, A04:2021 Insecure Design), ISO 27001 A.9.4 (System Access Control), NIST SP 800-53 AC-6 (Least Privilege), PCI-DSS Req. 7.1, SOC 2 CC6.1
@@ -52,13 +51,8 @@ Mongoose schema includes: `role`, `isAdmin`, `balance`, `verified`, `email`, `na
 - **Score**: **88** (High) — authenticated endpoint (not public, reducing from Critical), but privilege escalation + IDOR on financial data confirmed.
 - **Suggested Mitigation Actions**:
   1. **Immediate**: Add IDOR check — verify `req.user.id === id` or `req.user.role === 'admin'`
-  2. **Field allowlist**: Replace raw body passthrough with:
-     ```typescript
-     const ALLOWED_FIELDS = ['name', 'phone', 'bio', 'avatar'];
-     const filtered = pick(body, ALLOWED_FIELDS);
-     return this.userModel.findByIdAndUpdate(id, filtered, { new: true });
-     ```
-  3. **Create a DTO**: Use `class-validator` + `class-transformer` with `@Exclude()` on sensitive fields
+  2. **Field allowlist**: Replace raw body passthrough with a utility that picks only allowed fields (name, phone, bio, avatar) before passing to the update method
+  3. **Create a DTO**: Use class-validator + class-transformer with explicit exclusion of sensitive fields
   4. **Separate admin endpoint**: Create `PATCH /admin/users/:id` with explicit admin guard for privileged field modifications
   5. **Audit trail**: Log all user update operations with before/after field values
 
