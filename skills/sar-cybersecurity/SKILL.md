@@ -10,7 +10,7 @@ description: >
   files, environment variables, or architecture diagrams and asks for a security opinion.
   Do NOT use for generic coding tasks, code reviews focused on quality rather than
   security, or performance optimization unless a security angle is explicitly present.
-version: 1.4.0
+version: 1.5.0
 license: MIT
 ---
 
@@ -133,6 +133,8 @@ Then map to applicable [compliance standards](frameworks/compliance-standards.md
 
 ### Step 5 — Write Output Files
 Generate both language files per the [output format specification](frameworks/output-format.md), cross-linked, with no redundant content between sections.
+
+Every report must include a **Security Posture Dashboard** (see [output format](frameworks/output-format.md)) with quantitative coverage metrics — secure surface percentage, auth coverage, input validation rate, parameterized query rate, compliance alignment, and severity distribution. All metrics must show the percentage and raw count (e.g., `62% (30/48)`). These metrics serve as measurable OKRs for the assessed system.
 
 ---
 

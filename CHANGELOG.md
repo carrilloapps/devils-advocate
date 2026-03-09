@@ -12,6 +12,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## sar-cybersecurity [1.5.0] — 2026-03-09
+
+### Added
+- **Security Posture Dashboard** — mandatory section in every SAR report with quantitative coverage metrics that serve as measurable OKRs
+  - 13 required metrics: Assessment Coverage, Secure Surface, Critical/High/Medium Exposure, Auth Coverage, Input Validation Coverage, Parameterized Query Rate, Secrets Hygiene, Encryption Coverage, Compliance Alignment, Mean Finding Score, Remediation Priority Index
+  - 6 conditional metrics: Cloud Storage Secure Rate, CORS Policy Compliance, Rate Limiting Coverage, Logging & Monitoring Rate, Dependency Vulnerability Rate, RBAC Enforcement Rate
+  - Severity Distribution breakdown table (count + % of findings + % of surface per severity level)
+  - Rating thresholds (✅ Good ≥ 80%, ⚠️ Needs improvement 50–79%, 🟥 Critical < 50%)
+  - All metrics require both percentage and raw count — e.g., `62% (30/48)`
+- Updated `output-format.md` with full dashboard specification, presentation format, and rating system
+- Updated SKILL.md Step 5 to reference dashboard generation as mandatory
+- Updated README.md with dashboard documentation and feature highlight
+
+---
+
 ## sar-cybersecurity [1.4.0] — 2026-03-09
 
 ### Changed

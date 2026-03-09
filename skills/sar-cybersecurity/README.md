@@ -3,7 +3,7 @@
 > **Automated Security Assessment Report (SAR) generator — deep cybersecurity analysis mapped to 20+ compliance standards.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](../../CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](../../CHANGELOG.md)
 [![skill.sh](https://img.shields.io/badge/skill.sh-sar--cybersecurity-black.svg)](https://skills.sh/carrilloapps/skills/sar-cybersecurity)
 [![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/skills)
 [![X / Twitter](https://img.shields.io/badge/@carrilloapps-000000.svg?logo=x)](https://x.com/carrilloapps)
@@ -20,6 +20,7 @@ It is not a scanner. It is not a linter. It is a complete cybersecurity analysis
 - **Covers all database engines** — SQL (PostgreSQL, MySQL), NoSQL (MongoDB, DynamoDB, Firestore), Redis, and more
 - **Detects injection patterns** — SQL Injection, NoSQL Operator Injection, Regex/ReDoS, Mass Assignment, Field Injection, GraphQL abuse
 - **Audits storage and data leakage** — S3/GCS/Azure Blob, secrets in source code, file uploads, logs, message queues, CDN caching, IaC misconfigurations
+- **Quantitative Security Posture Dashboard** — every report includes coverage metrics (secure surface %, auth coverage %, input validation rate, parameterized query rate, compliance alignment) with raw counts — ready to use as OKRs
 - **Produces bilingual reports** — EN (en_US) and ES (es_VE) cross-linked Markdown files
 - **Respects read-only constraints** — writes only to `docs/security/`, never modifies source code
 - **Progressive context loading** — modular architecture with on-demand framework loading to prevent context window saturation
@@ -227,6 +228,28 @@ Each file contains:
 - **Differentiated scoring**: two findings of the same vulnerability type with different prerequisites/impact **must** receive different scores
 - **Confidentiality primacy**: data exfiltration findings (unauthorized data extraction) always score higher than availability-only findings (DoS/service disruption with no data exposure). Availability-only findings **cap at 49** and are delegated to performance/infrastructure tooling
 - **Impact classification**: every finding is classified as data exfiltration, integrity violation, dual-vector, or availability-only before scoring
+
+---
+
+## Security Posture Dashboard
+
+Every SAR includes a **quantitative Security Posture Dashboard** with measurable metrics that serve as OKRs for the assessed system:
+
+| Metric | What it measures |
+|--------|-----------------|
+| **Assessment Coverage** | Endpoints/components analyzed vs. total discovered |
+| **Secure Surface** | Endpoints with no findings above 50 (primary threshold) |
+| **Critical / High / Medium Exposure** | Percentage of surface at each severity level |
+| **Auth Coverage** | Endpoints with authentication enforced |
+| **Input Validation Coverage** | Endpoints with input validation vs. endpoints accepting user input |
+| **Parameterized Query Rate** | DB queries using parameterized statements vs. total DB queries |
+| **Secrets Hygiene** | Secrets in a secrets manager vs. total secrets discovered |
+| **Encryption Coverage** | Data stores with encryption at rest vs. total data stores |
+| **Compliance Alignment** | Standards with zero critical gaps vs. total applicable standards |
+| **Mean Finding Score** | Average score across all primary findings (> 50) |
+| **Remediation Priority Index** | Critical + High findings as percentage of total primary findings |
+
+All metrics show both percentage and raw count (e.g., `62% (30/48)`) and include a rating symbol (good, needs improvement, critical). Conditional metrics (cloud storage, CORS, rate limiting, logging, dependencies, RBAC) are included when the assessment scope covers them.
 
 ---
 
