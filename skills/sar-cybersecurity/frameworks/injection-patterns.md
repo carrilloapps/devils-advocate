@@ -43,11 +43,14 @@ The agent must actively scan for all of the following injection patterns across 
 
 ## Regex Injection / ReDoS (all engines)
 
-| Pattern | Risk | Detection |
-|---------|------|-----------|
-| `new RegExp(userInput)` without escaping | Critical | User can inject regex metacharacters (`.*`, `(?:a{1,9999})+$`) |
-| regex in MongoDB queries from user input | Critical | `{ field: { $regex: userInput } }` |
-| Catastrophic backtracking patterns | High | Nested quantifiers on user-controlled input: `(a+)+$`, `(a|a)+$` |
+| Pattern | Primary Impact | Risk | Detection |
+|---------|---------------|------|-----------|
+| `new RegExp(userInput)` without escaping | **Data exfiltration** — `.*` matches all records | Critical | User can inject wildcard/alternation patterns to enumerate data |
+| `new RegExp(userInput)` without escaping | **Availability-only** — `(a+)+$` causes CPU exhaustion | Warning (≤49) | Catastrophic backtracking, no data exposed. Delegate to performance tooling |
+| regex in MongoDB queries from user input | **Data exfiltration** — `{ $regex: ".*" }` returns full collection | Critical | `{ field: { $regex: userInput } }` |
+| Catastrophic backtracking patterns | **Availability-only** — service degradation | Warning (≤49) | Nested quantifiers on user-controlled input: `(a+)+$`, `(a|a)+$`. No data exposed |
+
+> **Impact classification rule**: The same `new RegExp(userInput)` vulnerability may have two distinct attack vectors. If the data exfiltration vector is present (attacker can manipulate the regex to match/return more data than authorized), score on that vector as a primary finding. If the **only** exploitable vector is ReDoS/CPU exhaustion with no data leakage, cap at 49 (availability-only).
 
 **Correct mitigation:**
 - Always escape regex metacharacters before constructing `RegExp`: `value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')`

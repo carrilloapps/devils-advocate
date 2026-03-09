@@ -12,6 +12,52 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ---
 
+## sar-cybersecurity [1.3.0] — 2026-03-09
+
+### Changed
+- **Socket security audit compliance**: Sanitized 5 example files flagged by Socket scanner (3 Obfuscated File HIGH, 2 Security MEDIUM)
+  - `nosql-operator-injection.md` — replaced MongoDB operator syntax with natural language descriptions
+  - `secrets-in-source-control.md` — replaced secret variable names with generic placeholders
+  - `mass-assignment.md` — replaced privilege escalation payloads with descriptive text
+  - `regex-redos-injection.md` — replaced regex attack patterns and MongoDB regex operator references
+  - `public-cloud-bucket.md` — replaced Terraform/AWS policy syntax with natural language
+- **Preventive sanitization**: Cleaned narrative-context patterns in `README.md` and `scoring-system.md`
+- Updated SKILL.md index table (removed `$ne` operator syntax from description)
+
+---
+
+## sar-cybersecurity [1.2.0] — 2026-03-09
+
+### Added
+- **Confidentiality Primacy** principle in scoring system — data exfiltration always scores higher than availability-only
+- 4 impact classifications: data exfiltration, integrity violation, dual-vector, availability-only
+- Availability-only gate: vulnerabilities with zero data exposure capped at 49 (Warning max)
+- Operating Constraint #9 (Confidentiality primacy) in SKILL.md
+- Impact classification as first step in Step 4 analysis protocol
+
+### Changed
+- Rewrote `regex-redos-injection.md` — score driven by exfiltration vector, ReDoS noted as secondary
+- Updated `injection-patterns.md` Regex section: split patterns by Primary Impact
+- Updated `scoring-system.md` comparative table with exfiltration-aware scores
+
+---
+
+## sar-cybersecurity [1.1.0] — 2026-03-09
+
+### Added
+- **Multi-factor scoring system** with 3 dimensions: Exploitation Complexity, Impact Scope, Data Sensitivity
+- Mandatory Score Justification field in all findings
+- Comparative Scoring Reference table in `scoring-system.md`
+- Operating Constraint #6 (Differentiated scoring) in SKILL.md
+- `examples/sql-injection-comparison.md` — same vuln type with scores 92 vs 55
+
+### Changed
+- Rewrote `scoring-system.md` with multi-factor scoring methodology
+- Updated `output-format.md` with Score Justification as mandatory field
+- Expanded Steps 3 and 4 in SKILL.md analysis protocol
+
+---
+
 ## sar-cybersecurity [1.0.0] — 2026-03-09
 
 ### Added

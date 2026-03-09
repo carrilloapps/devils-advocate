@@ -28,17 +28,17 @@ Vulnerable pattern (pseudocode):
 ## Assessment Trace
 
 1. **Entry point**: `POST /login` — public endpoint, no auth required.
-2. **Input handling**: `body.email` passed to `findUser()` without type validation — can be `{"$ne": null}`.
+2. **Input handling**: `body.email` passed to `findUser()` without type validation — can be an operator object instead of a string (e.g., a not-equal-null query construct).
 3. **Schema check**: Mongoose schema has `email: { type: String }` but `strict: true` only applies to document creation, not query filters.
 4. **Middleware check**: No `express-mongo-sanitize` in middleware chain (`main.ts`, `app.module.ts`).
-5. **Impact**: Attacker sends `{"email": {"$ne": null}}` → query becomes `{email: {$ne: null}}` → returns the **first user in the collection** (typically an admin created early). Combined with password-less flows or password reset, this enables full account takeover.
+5. **Impact**: Attacker sends an operator object as the email field → the query filter becomes a not-equal-null match → returns the **first user in the collection** (typically an admin created early). Combined with password-less flows or password reset, this enables full account takeover.
 6. **Scale**: Searched codebase for similar patterns — found **14 additional endpoints** passing `req.body` fields directly to `.find()`, `.findOne()`, or `.aggregate()`.
 
 ## SAR Finding
 
 ### [92] — NoSQL Operator Injection via Direct Body Passthrough (15 Endpoints)
 
-- **Description**: `POST /login` and 14 additional endpoints pass user input directly to MongoDB query filters without sanitization. An attacker can inject operators like `{"$ne": null}`, `{"$gt": ""}`, or `{"$regex": ".*"}` to bypass authentication, enumerate data, or extract the entire collection.
+- **Description**: `POST /login` and 14 additional endpoints pass user input directly to MongoDB query filters without sanitization. An attacker can inject query operators (not-equal-null, greater-than-empty, regex-wildcard) to bypass authentication, enumerate data, or extract the entire collection.
 - **Affected Component(s)**: `src/auth/auth.service.ts:34`, `src/auth/auth.controller.ts:12`, and 14 additional endpoints (see Appendix for full list)
 - **Evidence**:
   ```text
@@ -54,7 +54,7 @@ Vulnerable pattern (pseudocode):
   2. **Short-term**: Create DTOs for all endpoints with `class-validator` type enforcement (`@IsString()`, `@IsEmail()`)
   3. **Medium-term**: Audit all 15 endpoints for explicit field validation; replace `Model.findOne(bodyField)` with `Model.findOne({ email: String(bodyField) })`
   4. **Schema hardening**: Ensure `strict: true` on all Mongoose schemas
-  5. **Testing**: Add integration tests with operator injection payloads (`$ne`, `$gt`, `$regex`, `$where`)
+  5. **Testing**: Add integration tests with operator injection payloads (not-equal, greater-than, regex, server-side-execution operators)
 
 ## Key Principles Demonstrated
 

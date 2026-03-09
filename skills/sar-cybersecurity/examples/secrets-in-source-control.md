@@ -20,18 +20,18 @@ Discovery (pseudocode):
 ```text
 Sensitive content found in .env.production (committed to repo):
 
-  DATABASE_URL      = mongodb://<USER>:<PASSWORD>@<HOST>:27017/<DB>
-  JWT_SECRET        = <PLAINTEXT_JWT_SIGNING_KEY>
-  AWS_ACCESS_KEY_ID = <AWS_ACCESS_KEY_PLACEHOLDER>
-  AWS_SECRET_KEY    = <AWS_SECRET_KEY_PLACEHOLDER>
-  STRIPE_SECRET_KEY = <STRIPE_KEY_PLACEHOLDER>
+  <DB_CONN_VAR>             = <protocol>://<user>:<pass>@<host>:<port>/<db>
+  <SIGNING_KEY_VAR>         = <plaintext-signing-key>
+  <CLOUD_ACCESS_ID_VAR>     = <cloud-access-id-placeholder>
+  <CLOUD_SECRET_VAR>        = <cloud-secret-placeholder>
+  <PAYMENT_KEY_VAR>         = <payment-key-placeholder>
 ```
 
 ```text
 Hardcoded credential in source code:
 
   File: src/config/database.ts — line 8
-  Variable: MONGO_URI
+  Variable: DB_CONNECTION_STRING
     → contains full connection string with plaintext username and password
 ```
 
@@ -39,9 +39,9 @@ Hardcoded credential in source code:
 
 1. **Git file scan**: `.env`, `.env.production`, and `docker/.env.local` are tracked in git (not in `.gitignore`).
 2. **Secret pattern scan**: Found 12 secrets across 6 files:
-   - 3 `.env*` files: DB credentials, JWT secret, AWS keys, Stripe key
-   - `src/config/database.ts`: hardcoded MongoDB connection string
-   - `Dockerfile`: `ENV JWT_SECRET=...` in build args
+   - 3 `.env*` files: DB credentials, token signing key, cloud provider keys, payment API key
+   - `src/config/database.ts`: hardcoded connection string
+   - `Dockerfile`: signing key set via ENV directive in build args
    - `docker-compose.yml`: plaintext credentials in environment section
 3. **Git history check**: `git log` shows `.env` committed 14 months ago, `.env.production` committed 8 months ago.
 4. **`.gitignore` check**: No `.env*` pattern found in `.gitignore`.
@@ -52,14 +52,14 @@ Hardcoded credential in source code:
 
 ### [93] — Secrets Committed to Source Control (12 Secrets, 6 Files, 14 Months Exposure)
 
-- **Description**: 12 production secrets (database credentials, JWT signing key, AWS access keys, Stripe API key) are committed to the repository across 6 files. Secrets have been in git history for up to 14 months. No secrets management service is used. CI/CD pipeline echoes one secret to build logs.
+- **Description**: 12 production secrets (database credentials, token signing key, cloud access keys, payment API key) are committed to the repository across 6 files. Secrets have been in git history for up to 14 months. No secrets management service is used. CI/CD pipeline echoes one secret to build logs.
 - **Affected Component(s)**: `.env`, `.env.production`, `docker/.env.local`, `src/config/database.ts:8`, `Dockerfile`, `docker-compose.yml`, `.github/workflows/deploy.yml`
 - **Evidence**:
   ```text
   Committed files: git ls-files '*.env*' → 3 files tracked
   History: first .env commit was 14 months ago
   Hardcoded: connection string with credentials in src/config/database.ts line 8
-  Docker: JWT signing key visible in image layers via ENV directive
+  Docker: signing key visible in image layers via ENV directive
   CI/CD: database URL echoed to build logs in debug step
   ```
 - **Standards Violated**: OWASP Top 10 (A02:2021 Cryptographic Failures, A05:2021 Security Misconfiguration), ISO 27001 A.9.2, A.10.1 (access management, cryptography), NIST SP 800-53 IA-5 (Authenticator Management), CIS Controls 16.1, PCI-DSS Req. 3.4, 8.2 (if payment data), SOC 2 CC6.1, GDPR Art. 32 (if DB contains EU PII)
@@ -67,13 +67,13 @@ Hardcoded credential in source code:
 - **Score**: **93** (Critical) — production secrets, 14 months exposure in git history, no secrets manager, all contributors and any repo clone have full access.
 - **Suggested Mitigation Actions**:
   1. **Emergency (within hours)**:
-     - Rotate **all** exposed credentials immediately: MongoDB password, JWT secret, AWS keys, Stripe key
-     - Revoke the AWS access key via IAM console
-     - Regenerate Stripe API key in Stripe dashboard
+     - Rotate **all** exposed credentials immediately: DB password, signing key, cloud access keys, payment API key
+     - Revoke the cloud access key via the provider's IAM console
+     - Regenerate payment API key in the provider's dashboard
   2. **Immediate (within 24h)**:
      - Add `.env*` patterns to `.gitignore`
      - Remove secrets from `Dockerfile` — use runtime injection
-     - Fix CI/CD pipeline — remove `echo $DATABASE_URL`, use GitHub Actions masked secrets
+     - Fix CI/CD pipeline — remove debug echo of database URL variable, use GitHub Actions masked secrets
   3. **Short-term**:
      - Purge git history using `git filter-repo` or BFG Repo-Cleaner to remove all .env files from history
      - Force-push cleaned history (coordinate with team — destructive operation)

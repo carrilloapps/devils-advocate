@@ -49,6 +49,7 @@ Each file must contain a cross-language link at the top:
 - Evidence / Code Reference
 - Standards Violated
 - MITRE ATT&CK Technique (if applicable)
+- Score Justification (list every exploitation complexity, impact scope, and data sensitivity factor)
 - Suggested Mitigation Actions
 ## Risk Matrix
 ## Compliance Gap Summary

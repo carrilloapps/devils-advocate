@@ -12,10 +12,10 @@ An S3 bucket is configured with public read access and contains user uploads, da
 Vulnerable IaC pattern (pseudocode):
 
   File: terraform/s3.tf
-  Resource: aws_s3_bucket "uploads"
+  Resource: cloud storage bucket "uploads"
     → bucket name: <APP>-user-uploads-prod
-    → ACL set to public-read
-    → no block_public_access resource defined
+    → ACL set to allow public read access
+    → no public-access-block resource defined
     → no encryption, no versioning, no access logging
 ```
 
@@ -24,20 +24,20 @@ Bucket policy (discovered during assessment):
 
   Statement:
     → Effect: Allow
-    → Principal: * (any unauthenticated user)
-    → Action: s3:GetObject
+    → Principal: wildcard — any unauthenticated user
+    → Action: read any object
     → Resource: all objects in the bucket
 ```
 
 ## Assessment Trace
 
-1. **IaC scan**: `terraform/s3.tf` defines bucket with `acl = "public-read"`, no `aws_s3_bucket_public_access_block` resource.
-2. **Policy analysis**: Bucket policy grants `s3:GetObject` to `"Principal": "*"` on all objects — any unauthenticated user can download any file.
+1. **IaC scan**: `terraform/s3.tf` defines bucket with ACL set to public read, no public-access-block resource.
+2. **Policy analysis**: Bucket policy grants object-read access to a wildcard principal on all objects — any unauthenticated user can download any file.
 3. **Bucket contents**: Contains three prefixes:
    - `uploads/` — user-uploaded documents (IDs, contracts, personal files)
    - `backups/` — daily database dumps (`.sql.gz` files with customer PII)
    - `logs/` — application logs (contain JWT tokens, API keys in error traces)
-4. **Encryption**: No `ServerSideEncryptionConfiguration` — data stored unencrypted.
+4. **Encryption**: No server-side encryption configuration — data stored unencrypted.
 5. **Access logging**: No S3 Server Access Logging — no audit trail of who accessed what.
 6. **Frontend exposure**: Bucket name hardcoded in `src/config/storage.ts` and visible in client-side JavaScript.
 
@@ -45,13 +45,13 @@ Bucket policy (discovered during assessment):
 
 ### [97] — Public S3 Bucket Containing PII, Database Backups, and Application Secrets
 
-- **Description**: Production S3 bucket is publicly readable via ACL and bucket policy (Principal set to wildcard). The bucket contains user-uploaded personal documents, database backups with customer PII, and application logs with authentication tokens and API keys. No encryption at rest, no access logging.
+- **Description**: Production S3 bucket is publicly readable via ACL and bucket policy (principal set to wildcard). The bucket contains user-uploaded personal documents, database backups with customer PII, and application logs with authentication tokens and API keys. No encryption at rest, no access logging.
 - **Affected Component(s)**: `terraform/s3.tf`, bucket policy, `src/config/storage.ts`
 - **Evidence**:
   ```text
   Public URL: bucket backups prefix accessible without authentication (HTTP 200)
-  Policy: Principal set to wildcard, Action s3:GetObject on all objects
-  ACL: public-read
+  Policy: principal set to wildcard, object-read action on all objects
+  ACL: public read
   Encryption: None
   Logging: None
   ```
@@ -60,12 +60,12 @@ Bucket policy (discovered during assessment):
 - **Score**: **97** (Critical) — public access, PII confirmed, database backups accessible, secrets in logs, no encryption, no audit trail.
 - **Suggested Mitigation Actions**:
   1. **Emergency (within hours)**:
-     - Set `BlockPublicAccess: true` at the account level
-     - Remove `"Principal": "*"` from bucket policy
-     - Change ACL to `private`
+     - Enable public-access-block at the account level
+     - Remove wildcard principal from bucket policy
+     - Change ACL to private
   2. **Immediate (within 24h)**:
      - Enable SSE-KMS encryption on the bucket
-     - Rotate all JWT secrets and API keys found in log files
+     - Rotate all signing keys and API keys found in log files
      - Rotate database credentials (credentials visible in backup filenames/contents)
   3. **Short-term**:
      - Enable S3 Server Access Logging + CloudTrail data events

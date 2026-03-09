@@ -30,7 +30,7 @@ Vulnerable pattern (pseudocode):
 1. **Entry point**: `PATCH /users/:id` — authenticated (JWT guard), but no role check.
 2. **Input handling**: `req.body` passed directly to `findByIdAndUpdate` — no field filtering.
 3. **Schema analysis**: User schema contains sensitive fields: `role` (String, default: 'user'), `isAdmin` (Boolean, default: false), `balance` (Number), `verified` (Boolean).
-4. **Attack scenario**: Authenticated user sends `{ "role": "admin", "isAdmin": true, "balance": 999999 }` → all fields modified.
+4. **Attack scenario**: Authenticated user sends a body with elevated role, admin flag set to true, and inflated balance → all fields modified.
 5. **IDOR check**: No verification that `req.user.id === id` — user can modify **any** user's profile, including escalating other accounts.
 6. **Schema strict mode**: Schema uses `strict: true`, which only prevents fields **not** in the schema — all listed fields are in the schema and therefore writable.
 
@@ -43,7 +43,7 @@ Vulnerable pattern (pseudocode):
 - **Evidence**:
   ```text
   Attack payload: PATCH /users/<OTHER_USER_ID>
-  Body: fields set to role=admin, isAdmin=true, balance=999999
+  Body: protected fields overwritten — elevated role, admin flag, inflated balance
   Result: Target user escalated to admin with modified balance
   ```
 - **Standards Violated**: OWASP Top 10 (A01:2021 Broken Access Control, A04:2021 Insecure Design), ISO 27001 A.9.4 (System Access Control), NIST SP 800-53 AC-6 (Least Privilege), PCI-DSS Req. 7.1, SOC 2 CC6.1

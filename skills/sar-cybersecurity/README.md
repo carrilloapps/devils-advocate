@@ -3,7 +3,7 @@
 > **Automated Security Assessment Report (SAR) generator — deep cybersecurity analysis mapped to 20+ compliance standards.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](../../CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](../../CHANGELOG.md)
 [![skill.sh](https://img.shields.io/badge/skill.sh-sar--cybersecurity-black.svg)](https://skills.sh/carrilloapps/skills/sar-cybersecurity)
 [![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/skills)
 [![X / Twitter](https://img.shields.io/badge/@carrilloapps-000000.svg?logo=x)](https://x.com/carrilloapps)
@@ -198,6 +198,7 @@ Each file contains:
   - Evidence / Code Reference
   - Standards Violated
   - MITRE ATT&CK Technique (if applicable)
+  - Score Justification (exploitation complexity, impact scope, data sensitivity factors)
   - Suggested Mitigation Actions
 ## Risk Matrix
 ## Compliance Gap Summary
@@ -221,6 +222,11 @@ Each file contains:
 - Vulnerability unreachable via any public-facing surface → **capped at 40**
 - Vulnerability mitigated by upstream validation/guard/middleware → **downgraded to 25–49** (warning)
 - Only findings **> 50** appear as primary content; items 1–50 appear as warnings/informational notes
+- **Multi-factor scoring**: every reachable, unmitigated finding is scored using three dimensions — Exploitation Complexity (auth, keys, chaining), Impact Scope (single record vs. enumeration), and Data Sensitivity (public data vs. PII vs. credentials)
+- **Mandatory score justification**: every finding must list the specific factors that raised or lowered its score
+- **Differentiated scoring**: two findings of the same vulnerability type with different prerequisites/impact **must** receive different scores
+- **Confidentiality primacy**: data exfiltration findings (unauthorized data extraction) always score higher than availability-only findings (DoS/service disruption with no data exposure). Availability-only findings **cap at 49** and are delegated to performance/infrastructure tooling
+- **Impact classification**: every finding is classified as data exfiltration, integrity violation, dual-vector, or availability-only before scoring
 
 ---
 
@@ -275,8 +281,9 @@ These are the **minimum baseline** — the agent applies additional standards as
 
 1. **Map Entry Points** — HTTP endpoints, WebSockets, message queues, scheduled jobs, public API surface
 2. **Trace Execution Flows** — Complete call chain from entry point before scoring
-3. **Evaluate Existing Controls** — Auth middleware, input validation, parameterized queries, WAF, encryption
-4. **Score and Document** — Net effective risk, standards mapping, MITRE ATT&CK technique, actionable mitigation
+3. **Evaluate Existing Controls** — Auth middleware, input validation, parameterized queries, WAF, encryption — **plus** exploitation prerequisites: authentication, API keys, rate limits, network exposure, chaining requirements
+4. **Classify Impact Type** — Data exfiltration (primary), integrity violation (primary), dual-vector (score on exfiltration), or availability-only (cap at 49, delegate)
+5. **Score and Document** — Multi-factor net effective risk (exploitation complexity + impact scope + data sensitivity), mandatory score justification with impact classification, standards mapping, MITRE ATT&CK technique, actionable mitigation
 5. **Write Output Files** — Bilingual EN + ES, cross-linked, zero redundancy
 
 ---
@@ -295,16 +302,16 @@ No Pipe, Guard, or Schema exists, but inline logic prevents unauthorized access 
 A route appears to lack authentication → **Trace the full lifecycle** (reverse proxy, API gateway, WAF, middleware chain) before scoring. Score based on net effective security posture, not isolated code.
 
 ### NoSQL Operator Injection
-`req.body` passed directly to MongoDB `.find()` or `.findOne()` — attacker sends `{"$ne": null}` to extract all records → **Score 85–95** (Critical) if no sanitization middleware exists. Trace `express-mongo-sanitize` or schema `strict: true` before scoring.
+`req.body` passed directly to MongoDB `.find()` or `.findOne()` — attacker sends a not-equal-null operator object to extract all records → **Score 85–95** (Critical) if no sanitization middleware exists. Trace `express-mongo-sanitize` or schema `strict: true` before scoring.
 
 ### Regex Injection / ReDoS
-`new RegExp(userInput, 'i')` without escaping metacharacters → **Score 75–90** (High–Critical). Typically systemic — count all occurrences across the codebase. Recommend centralized `safeRegExp()` utility.
+`new RegExp(userInput, 'i')` without escaping metacharacters — if the attacker can use wildcard or pattern manipulation to **enumerate data**, score as a primary finding (**72–90**). If the only exploitable vector is catastrophic backtracking (nested-quantifier patterns) causing CPU exhaustion with **no data exposure**, cap at **49** (availability-only). Typically systemic — count all occurrences. Recommend centralized `safeRegExp()` utility.
 
 ### Mass Assignment via Unfiltered Body
 `Model.findByIdAndUpdate(id, req.body)` without field allowlist → **Score 75–90** (High–Critical) depending on sensitive fields exposed (`role`, `isAdmin`, `balance`). Recommend `pickAllowedFields()` utility.
 
 ### Public Cloud Storage Bucket
-S3/GCS/Azure Blob bucket with `PublicRead` ACL or `"Principal": "*"` policy containing sensitive data → **Score 90–100** (Critical). Activate `BlockPublicAccess`, enforce encryption, enable access logging.
+S3/GCS/Azure Blob bucket with public-read ACL or wildcard-principal policy containing sensitive data → **Score 90–100** (Critical). Activate public-access-block, enforce encryption, enable access logging.
 
 ### Secrets in Source Control
 `.env` files, API keys, or credentials committed to git → **Score 85–95** (Critical) even in current HEAD. Historically committed secrets score 60–75 (Medium–High). Rotate immediately, purge git history, adopt secrets manager.
@@ -387,10 +394,11 @@ skills/sar-cybersecurity/
     ├── runtime-validation.md             # Case B — Inline validation, score 25–49
     ├── full-flow-evaluation.md           # Case C — Infrastructure-layer auth
     ├── nosql-operator-injection.md       # Case D — MongoDB $ne injection, score 92
-    ├── regex-redos-injection.md          # Case E — ReDoS + data exposure, score 82
+    ├── regex-redos-injection.md          # Case E — Regex data enumeration (82) + ReDoS secondary
     ├── mass-assignment.md                # Case F — IDOR + privilege escalation, score 88
     ├── public-cloud-bucket.md            # Case G — Public S3 with PII, score 97
-    └── secrets-in-source-control.md      # Case H — 12 secrets in git, score 93
+    ├── secrets-in-source-control.md      # Case H — 12 secrets in git, score 93
+    └── sql-injection-comparison.md       # Case I — Same vuln type, different scores (92 vs 55)
 ```
 
 ---
