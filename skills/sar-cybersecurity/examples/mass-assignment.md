@@ -8,52 +8,38 @@
 
 An endpoint calls a database update method with the full request body without filtering which fields the client can modify.
 
-```text
-Vulnerable pattern (pseudocode):
+**Finding location:**
 
-  File: src/users/users.controller.ts — line 45
-  Route: PATCH /users/:id
-  Guards: JwtAuthGuard (authenticated, but no role check)
-    → extracts 'id' from URL params and 'body' from request
-    → passes both directly to usersService.update(id, body)
-
-  File: src/users/users.service.ts — line 30
-  Function: update(id, data)
-    → calls userModel.findByIdAndUpdate(id, data, { new: true })
-    → no field filtering — all body fields are written to the document
-
-  Mongoose schema sensitive fields: role, isAdmin, balance, verified, email, name, phone
-```
+- **Files**: `src/users/users.controller.ts` (line 45), `src/users/users.service.ts` (line 30)
+- **Route**: `PATCH /users/:id` — authenticated (JWT guard), but no role check
+- **Issue**: Request body forwarded directly to database update method without field filtering — all body fields are written to the document, including privilege and financial fields
+- **Sensitive schema fields**: The database schema contains privilege-related, financial, and verification fields that are writable through this endpoint
+- **Pattern reference**: See `injection-patterns.md` — Mass Assignment / Over-Posting table for detection signatures
 
 ## Assessment Trace
 
 1. **Entry point**: `PATCH /users/:id` — authenticated (JWT guard), but no role check.
-2. **Input handling**: `req.body` passed directly to `findByIdAndUpdate` — no field filtering.
-3. **Schema analysis**: User schema contains sensitive fields: `role` (String, default: 'user'), `isAdmin` (Boolean, default: false), `balance` (Number), `verified` (Boolean).
-4. **Attack scenario**: Authenticated user sends a body with elevated role, admin flag set to true, and inflated balance → all fields modified.
-5. **IDOR check**: No verification that `req.user.id === id` — user can modify **any** user's profile, including escalating other accounts.
-6. **Schema strict mode**: Schema uses `strict: true`, which only prevents fields **not** in the schema — all listed fields are in the schema and therefore writable.
+2. **Input handling**: Full request body passed directly to database update method — no field filtering or allowlist.
+3. **Schema analysis**: User schema contains privilege-related fields (access level, admin flag), financial fields, and verification flags — all writable through the endpoint.
+4. **Attack scenario**: Authenticated user sends a body with elevated privileges, admin flag, and modified financial data — all fields written without restriction.
+5. **IDOR check**: No ownership verification — any authenticated user can modify any other user's profile, including escalating other accounts.
+6. **Schema strict mode**: Schema strict mode only prevents fields not defined in the schema — all sensitive fields ARE defined and therefore writable.
 
 ## SAR Finding
 
 ### [88] — Mass Assignment + IDOR on User Update Endpoint
 
-- **Description**: `PATCH /users/:id` passes the full request body to `findByIdAndUpdate` without field filtering. Any authenticated user can modify any field (including `role`, `isAdmin`, `balance`) on any user account (IDOR — no ownership check).
+- **Description**: `PATCH /users/:id` passes the full request body to the database update method without field filtering. Any authenticated user can modify any field (including privilege, admin status, and financial fields) on any user account (IDOR — no ownership check).
 - **Affected Component(s)**: `src/users/users.controller.ts:45`, `src/users/users.service.ts:30`
-- **Evidence**:
-  ```text
-  Attack payload: PATCH /users/<OTHER_USER_ID>
-  Body: protected fields overwritten — elevated role, admin flag, inflated balance
-  Result: Target user escalated to admin with modified balance
-  ```
+- **Evidence**: Authenticated request to update another user's record with privilege-escalation fields — target user elevated to admin with modified financial data. No ownership verification, no field allowlist at any layer.
 - **Standards Violated**: OWASP Top 10 (A01:2021 Broken Access Control, A04:2021 Insecure Design), ISO 27001 A.9.4 (System Access Control), NIST SP 800-53 AC-6 (Least Privilege), PCI-DSS Req. 7.1, SOC 2 CC6.1
 - **MITRE ATT&CK**: T1098 (Account Manipulation), T1548 (Abuse Elevation Control Mechanism)
 - **Score**: **88** (High) — authenticated endpoint (not public, reducing from Critical), but privilege escalation + IDOR on financial data confirmed.
 - **Suggested Mitigation Actions**:
-  1. **Immediate**: Add IDOR check — verify `req.user.id === id` or `req.user.role === 'admin'`
-  2. **Field allowlist**: Replace raw body passthrough with a utility that picks only allowed fields (name, phone, bio, avatar) before passing to the update method
-  3. **Create a DTO**: Use class-validator + class-transformer with explicit exclusion of sensitive fields
-  4. **Separate admin endpoint**: Create `PATCH /admin/users/:id` with explicit admin guard for privileged field modifications
+  1. **Immediate**: Add ownership check — verify the authenticated user owns the target record or has admin privileges
+  2. **Field allowlist**: Replace raw body passthrough with a utility that picks only user-editable fields before passing to the update method
+  3. **Create a DTO**: Use validation decorators with explicit exclusion of privilege and financial fields
+  4. **Separate admin endpoint**: Create a dedicated admin route with explicit admin guard for privileged field modifications
   5. **Audit trail**: Log all user update operations with before/after field values
 
 ## Key Principles Demonstrated

@@ -6,55 +6,41 @@
 
 ## Scenario
 
-An endpoint passes `req.body` directly into a MongoDB query. An attacker sends an operator object instead of a string to extract all records.
+An authentication endpoint passes unvalidated user input directly to a database query. An attacker sends a query operator object instead of the expected string value to extract unauthorized records.
 
-```text
-Vulnerable pattern (pseudocode):
+**Finding location:**
 
-  File: src/auth/auth.service.ts — line 34
-  Function: findUser(email)
-    → calls userModel.findOne({ email })
-    → 'email' comes directly from req.body.email — no sanitization
-
-  File: src/auth/auth.controller.ts — line 12
-  Route: POST /login
-    → extracts body.email from request body (typed as 'any')
-    → passes directly to findUser() — no type validation
-    → body.email can be an object instead of a string
-
-  Missing controls: no express-mongo-sanitize, no DTO validation
-```
+- **Files**: `src/auth/auth.service.ts` (line 34), `src/auth/auth.controller.ts` (line 12)
+- **Route**: `POST /login` — public endpoint, no authentication required
+- **Issue**: Request body field forwarded to database query method without type validation or sanitization — the field accepts arbitrary objects where only a string is expected
+- **Missing controls**: No input sanitization middleware, no DTO or schema validation
+- **Pattern reference**: See `injection-patterns.md` — NoSQL Injection table for detection signatures
 
 ## Assessment Trace
 
 1. **Entry point**: `POST /login` — public endpoint, no auth required.
-2. **Input handling**: `body.email` passed to `findUser()` without type validation — can be an operator object instead of a string (e.g., a not-equal-null query construct).
-3. **Schema check**: Mongoose schema has `email: { type: String }` but `strict: true` only applies to document creation, not query filters.
-4. **Middleware check**: No `express-mongo-sanitize` in middleware chain (`main.ts`, `app.module.ts`).
-5. **Impact**: Attacker sends an operator object as the email field → the query filter becomes a not-equal-null match → returns the **first user in the collection** (typically an admin created early). Combined with password-less flows or password reset, this enables full account takeover.
-6. **Scale**: Searched codebase for similar patterns — found **14 additional endpoints** passing `req.body` fields directly to `.find()`, `.findOne()`, or `.aggregate()`.
+2. **Input handling**: Request body field forwarded to database query function without type validation — accepts arbitrary objects where a string is expected.
+3. **Schema check**: Database schema defines the field as String type, but strict mode only applies to document creation, not query filters.
+4. **Middleware check**: No input sanitization middleware in the application chain.
+5. **Impact**: Attacker sends a query operator object instead of a string → the database filter matches unintended documents → returns the **first document in the collection** (typically an admin created early). Combined with password-less flows or password reset, this enables full account takeover.
+6. **Scale**: Searched codebase for similar patterns — found **14 additional endpoints** forwarding request body fields directly to database query methods without validation.
 
 ## SAR Finding
 
 ### [92] — NoSQL Operator Injection via Direct Body Passthrough (15 Endpoints)
 
-- **Description**: `POST /login` and 14 additional endpoints pass user input directly to MongoDB query filters without sanitization. An attacker can inject query operators (not-equal-null, greater-than-empty, regex-wildcard) to bypass authentication, enumerate data, or extract the entire collection.
+- **Description**: `POST /login` and 14 additional endpoints pass user input directly to database query filters without sanitization. An attacker can inject query operator objects to bypass authentication, enumerate data, or extract the entire collection.
 - **Affected Component(s)**: `src/auth/auth.service.ts:34`, `src/auth/auth.controller.ts:12`, and 14 additional endpoints (see Appendix for full list)
-- **Evidence**:
-  ```text
-  Attack payload: POST /login with email field set to a "not-equal-null" operator object
-  Query executed: findOne with operator filter instead of string match
-  Result: Returns first user document in collection (typically admin)
-  ```
+- **Evidence**: Operator object injected via request body field on public endpoint — database query returns first document in collection (admin account). No authentication barriers, no input validation at any layer.
 - **Standards Violated**: OWASP Top 10 (A03:2021 Injection), NIST SP 800-53 SI-10, CIS Controls 16.4, ISO 27001 A.14.2, GDPR Art. 32 (if PII exposed), SOC 2 CC6.6
 - **MITRE ATT&CK**: T1190 (Exploit Public-Facing Application), T1078 (Valid Accounts — via auth bypass)
 - **Score**: **92** (Critical) — public endpoint, no sanitization at any layer, full collection exfiltration possible, PII exposure confirmed (email, name, phone fields in user schema).
 - **Suggested Mitigation Actions**:
-  1. **Immediate**: Install and apply `express-mongo-sanitize` as global middleware
-  2. **Short-term**: Create DTOs for all endpoints with `class-validator` type enforcement (`@IsString()`, `@IsEmail()`)
-  3. **Medium-term**: Audit all 15 endpoints for explicit field validation; replace `Model.findOne(bodyField)` with `Model.findOne({ email: String(bodyField) })`
-  4. **Schema hardening**: Ensure `strict: true` on all Mongoose schemas
-  5. **Testing**: Add integration tests with operator injection payloads (not-equal, greater-than, regex, server-side-execution operators)
+  1. **Immediate**: Install and apply input sanitization middleware globally to strip query operators from user input
+  2. **Short-term**: Create DTOs for all endpoints with strict type enforcement on every field
+  3. **Medium-term**: Audit all 15 endpoints for explicit field validation; enforce type coercion on all query filter values
+  4. **Schema hardening**: Enable strict mode on all database schemas
+  5. **Testing**: Add integration tests with operator injection payloads to verify sanitization
 
 ## Key Principles Demonstrated
 

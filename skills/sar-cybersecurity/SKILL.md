@@ -82,7 +82,7 @@ Before doing anything else, internalize these absolute rules:
 | [`examples/full-flow-evaluation.md`](examples/full-flow-evaluation.md) | Apparently insecure endpoint protected by infrastructure layer | 30 |
 | [`examples/nosql-operator-injection.md`](examples/nosql-operator-injection.md) | MongoDB operator injection via direct body passthrough (15 endpoints) | 92 |
 | [`examples/regex-redos-injection.md`](examples/regex-redos-injection.md) | Regex injection with data enumeration (primary) + ReDoS (secondary, availability-only) | 82 |
-| [`examples/mass-assignment.md`](examples/mass-assignment.md) | `findByIdAndUpdate(id, req.body)` + IDOR — privilege escalation | 88 |
+| [`examples/mass-assignment.md`](examples/mass-assignment.md) | Unfiltered request body in database update + IDOR — privilege escalation | 88 |
 | [`examples/public-cloud-bucket.md`](examples/public-cloud-bucket.md) | Public S3 bucket with PII, backups, and secrets in logs | 97 |
 | [`examples/secrets-in-source-control.md`](examples/secrets-in-source-control.md) | 12 secrets across 6 files committed for 14 months | 93 |
 | [`examples/sql-injection-comparison.md`](examples/sql-injection-comparison.md) | Same vuln type, different scores — public dump vs. authenticated+keyed single record | 92 vs 55 |

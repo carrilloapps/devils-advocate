@@ -302,19 +302,19 @@ No Pipe, Guard, or Schema exists, but inline logic prevents unauthorized access 
 A route appears to lack authentication → **Trace the full lifecycle** (reverse proxy, API gateway, WAF, middleware chain) before scoring. Score based on net effective security posture, not isolated code.
 
 ### NoSQL Operator Injection
-`req.body` passed directly to MongoDB `.find()` or `.findOne()` — attacker sends a not-equal-null operator object to extract all records → **Score 85–95** (Critical) if no sanitization middleware exists. Trace `express-mongo-sanitize` or schema `strict: true` before scoring.
+Unvalidated request body passed directly to database query methods — attacker sends an operator object instead of a scalar to bypass authentication filters and extract all records → **Score 85–95** (Critical) if no input sanitization middleware or strict schema validation exists. Trace all middleware and schema configuration before scoring.
 
 ### Regex Injection / ReDoS
-`new RegExp(userInput, 'i')` without escaping metacharacters — if the attacker can use wildcard or pattern manipulation to **enumerate data**, score as a primary finding (**72–90**). If the only exploitable vector is catastrophic backtracking (nested-quantifier patterns) causing CPU exhaustion with **no data exposure**, cap at **49** (availability-only). Typically systemic — count all occurrences. Recommend centralized `safeRegExp()` utility.
+Unsanitized user input passed to regex constructor without escaping metacharacters — if the attacker can use wildcard or pattern manipulation to **enumerate data**, score as a primary finding (**72–90**). If the only exploitable vector is catastrophic backtracking (nested-quantifier patterns) causing CPU exhaustion with **no data exposure**, cap at **49** (availability-only). Typically systemic — count all occurrences. Recommend centralized safe regex utility.
 
 ### Mass Assignment via Unfiltered Body
-`Model.findByIdAndUpdate(id, req.body)` without field allowlist → **Score 75–90** (High–Critical) depending on sensitive fields exposed (`role`, `isAdmin`, `balance`). Recommend `pickAllowedFields()` utility.
+Database update method receives unfiltered request body without field allowlist → **Score 75–90** (High–Critical) depending on sensitive fields exposed (privilege, admin status, financial data). Recommend field-picking utility.
 
 ### Public Cloud Storage Bucket
-S3/GCS/Azure Blob bucket with public-read ACL or wildcard-principal policy containing sensitive data → **Score 90–100** (Critical). Activate public-access-block, enforce encryption, enable access logging.
+Cloud storage bucket with public-read ACL or wildcard-principal policy containing sensitive data → **Score 90–100** (Critical). Activate public-access-block settings, enforce encryption, enable access logging.
 
 ### Secrets in Source Control
-`.env` files, API keys, or credentials committed to git → **Score 85–95** (Critical) even in current HEAD. Historically committed secrets score 60–75 (Medium–High). Rotate immediately, purge git history, adopt secrets manager.
+Environment files, API keys, or credentials committed to version control → **Score 85–95** (Critical) even in current HEAD. Historically committed secrets score 60–75 (Medium–High). Rotate immediately, purge history, adopt a secrets management service.
 
 ---
 
@@ -337,9 +337,9 @@ The skill actively scans for all injection families across all database engines:
 | Category | Examples | Engines |
 |----------|----------|---------|
 | SQL Injection | String concatenation, template literals, `.rawQuery()` | PostgreSQL, MySQL, SQLite, SQL Server |
-| NoSQL Operator Injection | `{"$ne": null}`, `Model.findOne(req.body)`, field name injection | MongoDB, Couchbase, Firestore |
-| Regex Injection / ReDoS | `new RegExp(userInput)`, `{$regex: userInput}`, catastrophic backtracking | All engines |
-| Mass Assignment | `Model.findByIdAndUpdate(id, req.body)`, `Object.assign(record, req.body)` | All ORMs/ODMs |
+| NoSQL Operator Injection | Operator objects in query filters, unvalidated request body as query, field name injection | MongoDB, Couchbase, Firestore |
+| Regex Injection / ReDoS | Unescaped user input in regex constructor, regex-based database queries, catastrophic backtracking | All engines |
+| Mass Assignment | Unfiltered request body passed to database update/create methods | All ORMs/ODMs |
 | GraphQL Abuse | Introspection in production, unbounded depth, batch abuse, resolver injection | GraphQL APIs |
 | ORM/ODM-Specific | Mongoose `strict: false`, Sequelize `literal()`, Prisma `$queryRaw()`, Knex `.raw()` | Per-framework |
 
@@ -393,7 +393,7 @@ skills/sar-cybersecurity/
     ├── unreachable-vulnerability.md      # Case A — Dead code, score ≤ 40
     ├── runtime-validation.md             # Case B — Inline validation, score 25–49
     ├── full-flow-evaluation.md           # Case C — Infrastructure-layer auth
-    ├── nosql-operator-injection.md       # Case D — MongoDB $ne injection, score 92
+    ├── nosql-operator-injection.md       # Case D — NoSQL operator injection, score 92
     ├── regex-redos-injection.md          # Case E — Regex data enumeration (82) + ReDoS secondary
     ├── mass-assignment.md                # Case F — IDOR + privilege escalation, score 88
     ├── public-cloud-bucket.md            # Case G — Public S3 with PII, score 97
