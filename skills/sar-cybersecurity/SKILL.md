@@ -10,7 +10,7 @@ description: >
   files, environment variables, or architecture diagrams and asks for a security opinion.
   Do NOT use for generic coding tasks, code reviews focused on quality rather than
   security, or performance optimization unless a security angle is explicitly present.
-version: 1.3.0
+version: 1.4.0
 license: MIT
 ---
 
