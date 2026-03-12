@@ -67,7 +67,7 @@ Evaluate what an attacker needs to successfully exploit the vulnerability:
 | Rate limiting, WAF, or request throttling in place | −5 to −10 | Partial barrier — slows exploitation, does not prevent it |
 | Requires internal network access (not internet-facing) | −10 to −20 | Eliminates external attack surface entirely |
 
-> **Cumulative floor**: Exploitation complexity adjustments cannot reduce a reachable, unmitigated finding below **50** (the primary finding threshold). If the total would push below 50, cap at 50 and document the reasoning.
+> **Cumulative floor**: Exploitation complexity adjustments cannot reduce a reachable, unmitigated finding below **51** (the primary finding threshold). If the total would push below 51, cap at 51 and document the reasoning. A score of exactly 50 or below falls into the Warning range (W-prefix in the vulnerabilities registry).
 
 ### Dimension 2 — Impact Scope (adjusts upward or downward)
 

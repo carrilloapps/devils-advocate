@@ -16,7 +16,7 @@
 
 | Skill | Description | Version | Install |
 |-------|-------------|---------|---------|
-| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![v2.8.8](https://img.shields.io/badge/v2.8.8-blue.svg)](CHANGELOG.md) | `npx skills add carrilloapps/skills@devils-advocate` |
+| [🔴 **devils-advocate**](skills/devils-advocate/) | Mandatory adversarial risk gate — intercepts every plan before execution, blocks all actions until you explicitly approve | [![v2.9.0](https://img.shields.io/badge/v2.9.0-blue.svg)](CHANGELOG.md) | `npx skills add carrilloapps/skills@devils-advocate` |
 | [🛡️ **sar-cybersecurity**](skills/sar-cybersecurity/) | Automated Security Assessment Report (SAR) generator — deep cybersecurity analysis mapped to 20+ compliance standards | [![v1.0.0](https://img.shields.io/badge/v1.0.0-blue.svg)](CHANGELOG.md) | `npx skills add carrilloapps/skills@sar-cybersecurity` |
 | 🔜 **postmortem-writing** | Post-incident analysis — structured postmortem reports with root cause analysis, timeline reconstruction, and lessons learned | *Planned* | — |
 
@@ -59,7 +59,7 @@ npx skills update    # Update all installed skills
 
 ## Skill Details
 
-### 🔴 [Devil's Advocate](skills/devils-advocate/) · [![v2.8.8](https://img.shields.io/badge/v2.8.8-blue.svg)](skills/devils-advocate/README.md)
+### 🔴 [Devil's Advocate](skills/devils-advocate/) · [![v2.9.0](https://img.shields.io/badge/v2.9.0-blue.svg)](skills/devils-advocate/README.md)
 
 > The mandatory adversarial analysis gate for 40+ AI coding agents — runs first, before any action.
 

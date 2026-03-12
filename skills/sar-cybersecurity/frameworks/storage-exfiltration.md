@@ -148,6 +148,6 @@ Beyond databases, the agent must assess **all data storage layers** for misconfi
 
 ## Cross-Reference
 
-- For database-specific inspection procedures → see [`database-access-protocol.md`](database-access-protocol.md)
-- For injection patterns in application code → see [`injection-patterns.md`](injection-patterns.md)
-- For compliance standard mapping → see [`compliance-standards.md`](compliance-standards.md)
+- For database-specific inspection procedures → see [`database-access-protocol.md`](database-access-protocol.md) *(domain framework — counts toward budget)*
+- For injection patterns in application code → see [`injection-patterns.md`](injection-patterns.md) *(domain framework — counts toward budget)*
+- For compliance standard mapping → see [`compliance-standards.md`](compliance-standards.md) *(domain framework — counts toward budget)*

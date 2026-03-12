@@ -49,7 +49,7 @@ Reply: 📝 [answers] to raise confidence | `continue` to proceed at worst-case 
 # 🔴 Devil's Advocate Analysis: GitHub Actions CI/CD Pipeline Setup
 
 **Analyzed**: 2026-02-20
-**Skill version**: 2.8.8
+**Skill version**: 2.9.0
 **Scope**: Version Control / Security — GitHub Actions workflow for test + Docker build + staging deploy; internal repository
 
 ---

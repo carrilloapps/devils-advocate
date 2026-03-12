@@ -1,9 +1,9 @@
 {
-  "version": "1.5.0",
+  "version": "1.8.0",
   "author": "José Carrillo",
   "organization": "carrilloapps",
   "abstract": "Automated Security Assessment Report (SAR) generator for AI coding agents. Performs deep cybersecurity analysis of codebases, APIs, databases, and infrastructure — producing bilingual (EN/ES) reports mapped to 20+ compliance standards including ISO 27001, NIST, OWASP, PCI-DSS, GDPR, and MITRE ATT&CK.",
-  "keywords": ["security-assessment", "sar", "cybersecurity", "vulnerability-analysis", "compliance", "owasp", "nist", "iso-27001", "gdpr", "pci-dss", "mitre-attack", "security-audit"],
+  "keywords": ["security-assessment", "sar", "cybersecurity", "vulnerability-analysis", "compliance", "owasp", "owasp-top-10", "nist", "iso-27001", "gdpr", "pci-dss", "mitre-attack", "cwe-top-25", "sans-top-20", "cis-controls", "supply-chain-security", "dependency-audit", "security-audit"],
   "references": [
     "https://github.com/carrilloapps/skills",
     "https://skills.sh/carrilloapps/skills/sar-cybersecurity",

@@ -105,6 +105,6 @@ The agent must actively scan for all of the following injection patterns across 
 
 ## Cross-Reference
 
-- For database inspection procedures during assessment → see [`database-access-protocol.md`](database-access-protocol.md)
-- For storage layer vulnerabilities beyond databases → see [`storage-exfiltration.md`](storage-exfiltration.md)
-- For compliance standard mapping of injection findings → see [`compliance-standards.md`](compliance-standards.md)
+- For database inspection procedures during assessment → see [`database-access-protocol.md`](database-access-protocol.md) *(domain framework — counts toward budget)*
+- For storage layer vulnerabilities beyond databases → see [`storage-exfiltration.md`](storage-exfiltration.md) *(domain framework — counts toward budget)*
+- For compliance standard mapping of injection findings → see [`compliance-standards.md`](compliance-standards.md) *(domain framework — counts toward budget)*

@@ -3,7 +3,7 @@
 > **Automated Security Assessment Report (SAR) generator — deep cybersecurity analysis mapped to 20+ compliance standards.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](../../CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.8.0-blue.svg)](../../CHANGELOG.md)
 [![skill.sh](https://img.shields.io/badge/skill.sh-sar--cybersecurity-black.svg)](https://skills.sh/carrilloapps/skills/sar-cybersecurity)
 [![GitHub](https://img.shields.io/badge/GitHub-carrilloapps-181717.svg?logo=github)](https://github.com/carrilloapps/skills)
 [![X / Twitter](https://img.shields.io/badge/@carrilloapps-000000.svg?logo=x)](https://x.com/carrilloapps)
@@ -20,7 +20,9 @@ It is not a scanner. It is not a linter. It is a complete cybersecurity analysis
 - **Covers all database engines** — SQL (PostgreSQL, MySQL), NoSQL (MongoDB, DynamoDB, Firestore), Redis, and more
 - **Detects injection patterns** — SQL Injection, NoSQL Operator Injection, Regex/ReDoS, Mass Assignment, Field Injection, GraphQL abuse
 - **Audits storage and data leakage** — S3/GCS/Azure Blob, secrets in source code, file uploads, logs, message queues, CDN caching, IaC misconfigurations
-- **Quantitative Security Posture Dashboard** — every report includes coverage metrics (secure surface %, auth coverage %, input validation rate, parameterized query rate, compliance alignment) with raw counts — ready to use as OKRs
+- **Audits dependencies and supply chain** — every package (direct and transitive), integrated skill, plugin, and MCP server is evaluated against known CVE databases, CWE/MITRE Top 25, OWASP Top 10 (A06, A08), and SANS/CIS Top 20 controls
+- **Maps every finding to CWE IDs** — mandatory CWE/MITRE Top 25 cross-reference for all findings, not just dependency vulnerabilities
+- **Quantitative Security Posture Dashboard** — every report includes coverage metrics (secure surface %, auth coverage %, input validation rate, parameterized query rate, dependency vulnerability rate, CWE Top 25 coverage, OWASP Top 10 alignment, compliance alignment) with raw counts — ready to use as OKRs
 - **Produces bilingual reports** — EN (en_US) and ES (es_VE) cross-linked Markdown files
 - **Respects read-only constraints** — writes only to `docs/security/`, never modifies source code
 - **Progressive context loading** — modular architecture with on-demand framework loading to prevent context window saturation
@@ -138,20 +140,41 @@ When you ask for a security analysis, vulnerability assessment, or SAR, the skil
                   WebSockets, message queues, scheduled jobs, APIs.
        │
        ▼
-3. TRACES      — For each potential vulnerability, traces the
+3. AUDITS      — Inventories all packages, dependencies, integrated
+                  skills/plugins. Checks CVEs, CWE/MITRE Top 25,
+                  OWASP Top 10, SANS/CIS Top 20 compliance.
+       │
+       ▼
+4. TRACES      — For each potential vulnerability, traces the
                   complete execution flow before assigning any score.
        │
        ▼
-4. EVALUATES   — Checks existing controls: auth, validation,
+5. EVALUATES   — Checks existing controls: auth, validation,
                   parameterized queries, WAF, encryption.
        │
        ▼
-5. SCORES      — Assigns 0–100 criticality based on NET effective
-                  risk (after controls), not isolated code.
+6. SCORES      — Classifies impact type, assigns 0–100 criticality
+                  based on NET effective risk (after controls).
        │
        ▼
-6. DOCUMENTS   — Produces bilingual EN + ES reports in
+7. READS CSV   — Reads existing vulnerabilities.csv to find
+                  mitigated and recurring findings.
+       │
+       ▼
+8. DOCUMENTS   — Produces bilingual EN + ES reports in
                   docs/security/ with full compliance mapping.
+                  Title reflects worst vulnerability found.
+                  Includes [MITIGATED] section if applicable.
+       │
+       ▼
+9. REGISTERS   — Creates/updates vulnerabilities.csv with all
+                  findings (Pending). Preserves team fields.
+                  Validates CSV integrity. Never deletes rows.
+       │
+       ▼
+10. RELEASES   — Discards all assessment context from the
+                  conversation window. Generated files in
+                  docs/security/ are the single source of truth.
 ```
 
 ### Progressive Context Loading
@@ -159,9 +182,9 @@ When you ask for a security analysis, vulnerability assessment, or SAR, the skil
 The skill uses a modular architecture to prevent AI context window saturation:
 
 - **SKILL.md** (~115 lines) — always loaded: core rules, constraints, analysis protocol, Index
-- **Protocol files** (free) — `output-format.md`, `scoring-system.md` — loaded automatically for every assessment
+- **Protocol files** (free) — `output-format.md`, `scoring-system.md`, `dependency-supply-chain.md` — loaded automatically for every assessment
 - **Domain frameworks** (max 2 per assessment) — `compliance-standards.md`, `database-access-protocol.md`, `injection-patterns.md`, `storage-exfiltration.md` — loaded on demand based on assessment scope
-- **Examples** (8 canonical edge cases) — loaded on demand as reference outputs for correct scoring, tracing, and formatting
+- **Examples** (10 canonical edge cases) — loaded on demand as reference outputs for correct scoring, tracing, and formatting
 
 All files are cross-referenced with internal Markdown links from the Index section in SKILL.md.
 
@@ -177,11 +200,19 @@ The skill activates automatically on any of these patterns:
 
 ### Output
 
-Every assessment produces **exactly two linked Markdown files**:
+Every assessment produces **exactly two linked Markdown files** plus an **updated CSV index**:
 
 ```
 docs/security/[DD-MM-YYYY]_[SHORT-TITLE]_EN.md   ← English (en_US)
 docs/security/[DD-MM-YYYY]_[SHORT-TITLE]_ES.md   ← Spanish (es_VE)
+docs/security/vulnerabilities.csv                           ← Living registry of all findings
+```
+
+The `[SHORT-TITLE]` is derived from the **worst (highest-scoring) vulnerability** found. For example, a SAR where the top finding is a SQL Injection on `/api/users` (score 92) produces:
+
+```
+docs/security/12-03-2026_SQLI-API-USERS_EN.md
+docs/security/12-03-2026_SQLI-API-USERS_ES.md
 ```
 
 Each file contains:
@@ -201,10 +232,34 @@ Each file contains:
   - MITRE ATT&CK Technique (if applicable)
   - Score Justification (exploitation complexity, impact scope, data sensitivity factors)
   - Suggested Mitigation Actions
+## Mitigated Findings  (from vulnerabilities.csv, if any have Status: Mitigated)
+### [MITIGATED] — [ID] [Title] (was: [Score] [Label])
 ## Risk Matrix
 ## Compliance Gap Summary
 ## Appendix
 ```
+
+---
+
+## Vulnerabilities Registry
+
+Every SAR generation creates or updates `docs/security/vulnerabilities.csv` — a persistent CSV (11 columns) that tracks **every finding ever reported** across all assessments:
+
+```csv
+ID,Type,Score,Label,Title,Detection Date,Mitigation Date,Status,Assignee,Priority,Existing Mitigation
+F01,Finding,92,Critical,SQL Injection in /api/users endpoint,2026-03-12,,Pending,,P0 - Immediate,No
+F02,Finding,85,High,express@4.17.1 CVE-2024-12345 (XSS),2026-03-12,,Pending,,P1 - Urgent,Helmet only
+W01,Warning,45,Low,Missing rate limiting on public API,2026-03-12,,Pending,,P3 - Scheduled,No
+```
+
+**Key rules**:
+- `F01, F02...` for Findings (score > 50), `W01, W02...` for Warnings (score <= 50)
+- Sorted by status group (open findings, open warnings, mitigated), then by Score descending within each group
+- Agent writes new entries with `Status: Pending` — never overwrites team-managed fields (`Mitigation Date`, `Assignee`, `Status` if not `Pending`)
+- `Existing Mitigation` reflects controls **already in the code**, not suggested remediation
+- Rows are **never deleted** — IDs are permanent
+- Status lifecycle (team-managed): `Pending` → `In Development` → `Processing` → `In QA` → `In Staging` → `Mitigated`
+- Findings with `Status: Mitigated` appear in the SAR under a `## Mitigated Findings` section with `[MITIGATED]` label
 
 ---
 
@@ -248,6 +303,8 @@ Every SAR includes a **quantitative Security Posture Dashboard** with measurable
 | **Compliance Alignment** | Standards with zero critical gaps vs. total applicable standards |
 | **Mean Finding Score** | Average score across all primary findings (> 50) |
 | **Remediation Priority Index** | Critical + High findings as percentage of total primary findings |
+| **CWE/MITRE Top 25 Coverage** | CWE Top 25 categories with zero findings vs. 25 total |
+| **OWASP Top 10 Alignment** | OWASP Top 10 categories with zero critical gaps vs. 10 total |
 
 All metrics show both percentage and raw count (e.g., `62% (30/48)`) and include a rating symbol (good, needs improvement, critical). Conditional metrics (cloud storage, CORS, rate limiting, logging, dependencies, RBAC) are included when the assessment scope covers them.
 
@@ -255,7 +312,7 @@ All metrics show both percentage and raw count (e.g., `62% (30/48)`) and include
 
 ## Compliance Standards Coverage
 
-Every finding is mapped to all applicable standards from a baseline of **20+ frameworks**:
+Every finding is mapped to all applicable standards from a baseline of **22+ frameworks**:
 
 | Standard | Domain |
 |----------|--------|
@@ -279,6 +336,8 @@ Every finding is mapped to all applicable standards from a baseline of **20+ fra
 | FIPS 140-3 | Cryptographic module security validation |
 | MITRE ATT&CK | Threat modeling via real-world adversary techniques |
 | NIST SP 800-171 | Protecting Controlled Unclassified Information (CUI) |
+| CWE/MITRE Top 25 | Most dangerous software weaknesses — mandatory CWE mapping for every finding |
+
 
 These are the **minimum baseline** — the agent applies additional standards as expert judgment dictates.
 
@@ -296,18 +355,30 @@ These are the **minimum baseline** — the agent applies additional standards as
 | DB query without index check | Never |
 | DB query result set | Maximum 50 rows |
 | Technical names in target language | Never — always keep in original English |
-| Generate both EN + ES files | Always, cross-linked |
+| Skip dependency/package audit | Never — all packages and skills must be evaluated |
+| Finding without CWE identifier | Never — every finding must map to CWE ID(s) |
+| Skip integrated skills evaluation | Never — all skills/plugins must pass permission and provenance checks |
+| SAR title from worst finding | Always — filename and heading reflect the #1 finding |
+| Update `vulnerabilities.csv` after every SAR | Always — add new with `Pending`, update recurring scores |
+| Overwrite team-managed CSV fields | Never — `Mitigation Date`, `Assignee`, `Status` (if not `Pending`) are team-owned |
+| Show mitigated findings in SAR | Always — `[MITIGATED]` section when CSV has mitigated entries |
+| Delete rows from `vulnerabilities.csv` | Never — rows are permanent, IDs are never reassigned |
+| Retain assessment context after completion | Never — discard context, read from generated files if needed |
+| Generate both EN + ES files | Always (unless user requests single-language), cross-linked |
 
 ---
 
 ## Analysis Protocol
 
 1. **Map Entry Points** — HTTP endpoints, WebSockets, message queues, scheduled jobs, public API surface
-2. **Trace Execution Flows** — Complete call chain from entry point before scoring
-3. **Evaluate Existing Controls** — Auth middleware, input validation, parameterized queries, WAF, encryption — **plus** exploitation prerequisites: authentication, API keys, rate limits, network exposure, chaining requirements
-4. **Classify Impact Type** — Data exfiltration (primary), integrity violation (primary), dual-vector (score on exfiltration), or availability-only (cap at 49, delegate)
-5. **Score and Document** — Multi-factor net effective risk (exploitation complexity + impact scope + data sensitivity), mandatory score justification with impact classification, standards mapping, MITRE ATT&CK technique, actionable mitigation
-5. **Write Output Files** — Bilingual EN + ES, cross-linked, zero redundancy
+2. **Audit Dependencies & Supply Chain** — Inventory all packages (direct + transitive), audit against NVD/GitHub Advisories/OSV, evaluate integrated skills/plugins for permissions and provenance, map to CWE/MITRE Top 25, OWASP Top 10 (A06, A08), and SANS/CIS Controls (2, 7, 16)
+3. **Trace Execution Flows** — Complete call chain from entry point before scoring
+4. **Evaluate Existing Controls** — Auth middleware, input validation, parameterized queries, WAF, encryption — **plus** exploitation prerequisites: authentication, API keys, rate limits, network exposure, chaining requirements
+5. **Score and Document** — Classify impact type (data exfiltration, integrity, dual-vector, availability-only), apply multi-factor net effective risk (exploitation complexity + impact scope + data sensitivity), mandatory score justification with impact classification, CWE ID(s), standards mapping, MITRE ATT&CK technique, actionable mitigation
+6. **Read Vulnerabilities Registry** — Read existing `vulnerabilities.csv` to identify mitigated and recurring findings before writing the report
+7. **Write Output Files** — Bilingual EN + ES, cross-linked, zero redundancy. Title derived from worst finding. Include `[MITIGATED]` section if applicable
+8. **Update Vulnerabilities Registry** — Create or update `docs/security/vulnerabilities.csv` with all findings. Add new with `Pending`, update recurring scores, preserve team-managed fields. Validate CSV integrity after writing
+9. **Release Context** — Discard all assessment context from the conversation. Generated files are the single source of truth. If follow-up is needed, read from `docs/security/`
 
 ---
 
@@ -339,6 +410,15 @@ Cloud storage bucket with public-read ACL or wildcard-principal policy containin
 ### Secrets in Source Control
 Environment files, API keys, or credentials committed to version control → **Score 85–95** (Critical) even in current HEAD. Historically committed secrets score 60–75 (Medium–High). Rotate immediately, purge history, adopt a secrets management service.
 
+### Vulnerable Dependency with Critical CVE
+Direct dependency with a Critical CVE (CVSS >= 9.0) whose vulnerable function is called by the application → **Score 85–95** (Critical). If the vulnerable function is never called (unreachable), cap at ≤ 40 per the unreachable rule. Recommend immediate upgrade to patched version.
+
+### Integrated Skill with Excessive Permissions
+An integrated skill/plugin requests write access to files, reads secrets, or makes undocumented network calls beyond its stated purpose → **Score 60–80** (Medium–High). Recommend permission restriction, provenance verification, and version pinning.
+
+### Missing Lock File or Unpinned Dependencies
+No lock file committed to version control, or production dependencies use broad version ranges (`^`, `~`, `*`) → **Score 55–70** (Medium). Non-reproducible builds enable automatic introduction of compromised versions. Recommend exact pinning and lock file commitment.
+
 ---
 
 ## Database Access Protocol
@@ -365,6 +445,27 @@ The skill actively scans for all injection families across all database engines:
 | Mass Assignment | Unfiltered request body passed to database update/create methods | All ORMs/ODMs |
 | GraphQL Abuse | Introspection in production, unbounded depth, batch abuse, resolver injection | GraphQL APIs |
 | ORM/ODM-Specific | Mongoose `strict: false`, Sequelize `literal()`, Prisma `$queryRaw()`, Knex `.raw()` | Per-framework |
+
+---
+
+## Dependency & Supply Chain Security
+
+Every assessment includes mandatory evaluation of the full dependency and supply chain:
+
+| Category | What is checked |
+|----------|-----------------|
+| Direct dependencies | Version audit, CVE lookup (NVD, GitHub Advisories, OSV), CVSS scoring, fix availability |
+| Transitive dependencies | Same audit as direct — transitive CVEs are equally exploitable |
+| Integrated skills/plugins | Permission scope, data access, write capability, provenance, version pinning |
+| Version pinning | Exact versions vs. ranges, lock file presence and integrity |
+| Supply chain attacks | Dependency confusion, typosquatting, maintainer trust, provenance attestation |
+| Container images | Known CVEs, SHA pinning vs. tag mutability |
+| CI/CD dependencies | Action/step pinning, permissions granted |
+
+All findings are mapped to:
+- **CWE/MITRE Top 25** — mandatory CWE ID(s) for every finding
+- **OWASP Top 10** — A06 (Vulnerable and Outdated Components), A08 (Software and Data Integrity Failures)
+- **SANS/CIS Top 20** — CIS Controls 2, 7, 16, 18
 
 ---
 
@@ -411,8 +512,9 @@ skills/sar-cybersecurity/
 │   ├── compliance-standards.md           # [Domain] 20 baseline standards + expanded reference
 │   ├── database-access-protocol.md       # [Domain] SQL, NoSQL, Redis inspection protocol
 │   ├── injection-patterns.md             # [Domain] 6 injection families across all engines
-│   └── storage-exfiltration.md           # [Domain] 7 storage/exfiltration categories
-└── examples/                             # Reference SAR outputs (load on demand)
+│   ├── storage-exfiltration.md           # [Domain] 7 storage/exfiltration categories
+│   └── dependency-supply-chain.md       # [Protocol] CWE/MITRE Top 25, OWASP Top 10, SANS/CIS Top 20, supply chain
+├── examples/                             # Reference SAR outputs (load on demand)
     ├── unreachable-vulnerability.md      # Case A — Dead code, score ≤ 40
     ├── runtime-validation.md             # Case B — Inline validation, score 25–49
     ├── full-flow-evaluation.md           # Case C — Infrastructure-layer auth
@@ -421,7 +523,13 @@ skills/sar-cybersecurity/
     ├── mass-assignment.md                # Case F — IDOR + privilege escalation, score 88
     ├── public-cloud-bucket.md            # Case G — Public S3 with PII, score 97
     ├── secrets-in-source-control.md      # Case H — 12 secrets in git, score 93
-    └── sql-injection-comparison.md       # Case I — Same vuln type, different scores (92 vs 55)
+    ├── sql-injection-comparison.md       # Case I — Same vuln type, different scores (92 vs 55)
+    └── recurring-assessment.md          # Case J — Second SAR, mitigated finding, CSV update flow
+# Output directory (generated at runtime):
+# docs/security/
+# ├── vulnerabilities.csv                # Persistent registry (11 columns, sorted by status group then Score desc)
+# ├── [DD-MM-YYYY]_[WORST-VULN]_EN.md   # SAR report (English)
+# └── [DD-MM-YYYY]_[WORST-VULN]_ES.md   # SAR report (Spanish)
 ```
 
 ---
